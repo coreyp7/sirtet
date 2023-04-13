@@ -35,15 +35,37 @@ void fillGrid(){
     printf("(%i, %i)", grid[(GRID_WIDTH * GRID_HEIGHT)-1].x, grid[(GRID_WIDTH * GRID_HEIGHT)-1].y);
 }
 
+// Get pointer to rect at position specified.
+// (Top left going down)
+// Returns NULL if the requested grid position is invalid.
+SDL_Rect* getTileRect(int x, int y){
+    if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
+        return NULL;
+    }
+
+    int rowStart = y * GRID_WIDTH;
+    return &grid[rowStart + x];
+}
+
 
 void gameLoop(){
     bool quit = false;
 
     SDL_Event event;
+
+    SDL_Rect windowViewport = {
+        0, 0, WINDOW_WIDTH, WINDOW_HEIGHT
+    };
+
+    // Viewport specifically for the tetris grid.
+    SDL_Rect gridViewport = {
+            ( WINDOW_WIDTH - (GRID_WIDTH*TILE_SIZE) )/2,
+            WINDOW_HEIGHT - (GRID_HEIGHT*TILE_SIZE) - 50,
+            GRID_WIDTH*TILE_SIZE, GRID_HEIGHT*TILE_SIZE
+    };
     
-
     while(!quit){
-
+        // event loop
         while(SDL_PollEvent(&event) != 0){
             switch(event.type){
                 case SDL_QUIT:
@@ -52,31 +74,28 @@ void gameLoop(){
             }
         }
 
+        // RENDERING //
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        // SDL_Rect gridViewport = 
-        //     {(WINDOW_WIDTH+(GRID_WIDTH*TILE_SIZE))/2,
-        //     (WINDOW_HEIGHT+(GRID_HEIGHT*TILE_SIZE))/2,
-        //     GRID_WIDTH, GRID_HEIGHT
-        // };
-        // SDL_RenderSetViewport(renderer, &gridViewport);
+        SDL_RenderSetViewport(renderer, &gridViewport);
 
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
         // render grid
         for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
-            // SDL_RenderDrawPoint(renderer, grid[i].x * 5, grid[i].y * 5);
             if(SDL_RenderDrawRect(renderer, &grid[i])<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
             }
         }
-        // SDL_Rect tile = {0, 0, TILE_SIZE, TILE_SIZE};
-        // SDL_Rect tile2 = {0, TILE_SIZE, TILE_SIZE, TILE_SIZE};
-        // SDL_Rect tile3 = {TILE_SIZE, 0, TILE_SIZE, TILE_SIZE};
 
-        // SDL_RenderDrawRect(renderer, &tile);
-        // SDL_RenderDrawRect(renderer, &tile2);
-        // SDL_RenderDrawRect(renderer, &tile3);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        SDL_RenderDrawRect(renderer, getTileRect(9, 5));
+
+        SDL_Rect test = { 0, 0, 100, 100 };
+        SDL_RenderSetViewport(renderer, &windowViewport);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderDrawRect(renderer, NULL);
 
         SDL_RenderPresent(renderer);
     }
