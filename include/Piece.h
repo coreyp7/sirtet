@@ -8,8 +8,7 @@ class Piece {
     private:
         SDL_Renderer *renderer;
         SDL_Color color; // color of piece
+        SDL_Rect (*grid)[];
 
         int x, y;
-    
-        SDL_Rect (*grid)[];
 };
