@@ -7,6 +7,15 @@
 /* Project includes */
 #include "include/util.h"
 
+typedef struct {
+    int x, y;
+} Pair;
+
+typedef struct {
+    int x, y; 
+    Pair blocks[4];
+} Piece; // right now hardcoded to one type of piece
+
 int init();
 
 const int WINDOW_WIDTH = 1080;
@@ -19,6 +28,14 @@ const int TILE_SIZE = 25;
 
 SDL_Window *window;
 SDL_Renderer *renderer;
+
+Pair pair = {1, 1};
+
+Piece piece = {
+    0,
+    1,
+    {Pair{piece.x, piece.y-1}, Pair{piece.x+1, piece.y}, Pair{piece.x+1, piece.y+1}}
+};
 
 
 SDL_Rect grid[GRID_WIDTH * GRID_HEIGHT]; // 0 - 199
@@ -71,6 +88,11 @@ void gameLoop(){
                 case SDL_QUIT:
                     quit = true;
                     break;
+                case SDL_KEYDOWN:
+                    if(event.key.keysym.sym == SDLK_s){
+                        piece.y++;
+                    }
+                    break;
             }
         }
 
@@ -90,7 +112,20 @@ void gameLoop(){
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        SDL_RenderDrawRect(renderer, getTileRect(9, 5));
+        // SDL_RenderDrawRect(renderer, getTileRect(0, 0));
+        // SDL_RenderDrawRect(renderer, getTileRect(0, 1));
+        // SDL_RenderDrawRect(renderer, getTileRect(1, 1));
+        // SDL_RenderDrawRect(renderer, getTileRect(1, 2));
+
+        SDL_RenderDrawRect(renderer, getTileRect(piece.x, piece.y));
+
+        Pair *currPair = piece.blocks;
+        for(int i=0; i<4; i++){
+            SDL_RenderDrawRect(renderer, getTileRect(currPair->x, currPair->y));
+            currPair++;
+        }
+
+
 
         SDL_Rect test = { 0, 0, 100, 100 };
         SDL_RenderSetViewport(renderer, &windowViewport);
