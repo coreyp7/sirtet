@@ -126,16 +126,15 @@ void gameLoop(){
                     quit = true;
                     break;
                 case SDL_KEYDOWN:
-                    // Direction dir;
-                    // if(event.key.keysym.sym == SDLK_w){
-                    //     movePiece(&piece, UP);
-                    // } else if(event.key.keysym.sym == SDLK_s){
-                    //     movePiece(&piece, DOWN);
-                    // } else if(event.key.keysym.sym == SDLK_a){
-                    //     movePiece(&piece, LEFT);
-                    // } else if(event.key.keysym.sym == SDLK_d){
-                    //     movePiece(&piece, RIGHT);
-                    // }
+                    if(event.key.keysym.sym == SDLK_w){
+                        testPiece.move(UP);
+                    } else if(event.key.keysym.sym == SDLK_s){
+                        testPiece.move(DOWN);
+                    } else if(event.key.keysym.sym == SDLK_a){
+                        testPiece.move(LEFT);
+                    } else if(event.key.keysym.sym == SDLK_d){
+                        testPiece.move(RIGHT);
+                    }
                     break;
             }
         }
