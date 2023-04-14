@@ -1,7 +1,7 @@
 FILENAME = main
 
 #OBJS specifies which files to compile as part of the project
-OBJS = src\main.cpp src\Tile.cpp src\Block.cpp
+OBJS = src\main.cpp src\Tile.cpp src\Block.cpp src\Piece.cpp
 
 #CC specifies which compiler we're using
 CC = g++

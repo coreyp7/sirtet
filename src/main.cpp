@@ -5,26 +5,15 @@
 #include <stdio.h>
 
 /* Project includes */
-#include "include/util.h"
+#include "include/Piece.h"
 #include "include/Tile.h"
 
 int init();
 void cleanup();
 
-enum Direction {
-    UP, DOWN, LEFT, RIGHT
-};
-
-// typedef struct {
-//     int x, y;
-// } Pair;
-
-// typedef struct {
-//     int x, y; 
-//     Pair blocks[4];
-// } Piece; // right now hardcoded to one type of piece
-
-
+// enum Direction {
+//     UP, DOWN, LEFT, RIGHT
+// };
 
 const int WINDOW_WIDTH = 1080;
 const int WINDOW_HEIGHT = 720;
@@ -39,6 +28,7 @@ SDL_Renderer *renderer;
 
 
 Tile grid[GRID_WIDTH * GRID_HEIGHT]; // 0 - 199
+Piece testPiece = Piece{1, 1};
 
 // void renderPiece(Piece *piece){
 //     // Render piece at base position
@@ -166,7 +156,18 @@ void gameLoop(){
             }
         }
 
+        // render piece
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        Block *block = testPiece.blocks;
+        for(int i=0; i<4; i++){
+            SDL_Rect rect = {block->x * TILE_SIZE, block->y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+            if(SDL_RenderDrawRect(renderer, &rect)<0){
+                printf("SDL_Error:%s\n", SDL_GetError());
+            }
+            block++;
+        }
+
+        // SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         //renderPiece(&piece);
         SDL_RenderPresent(renderer);
 

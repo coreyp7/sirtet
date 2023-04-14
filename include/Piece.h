@@ -1,14 +1,13 @@
-#include <SDL.h>
+#pragma once
+#include <include/Direction.h>
+#include <include/Block.h>
 
 class Piece {
     public:
-        Piece(SDL_Renderer *renderer, SDL_Color color, SDL_Rect (*grid)[]);
-        void render();
+        Block blocks[4]; //hardcoding rn to one type of piece
 
-    private:
-        SDL_Renderer *renderer;
-        SDL_Color color; // color of piece
-        SDL_Rect (*grid)[];
+        Piece(int x, int y);
+        void move(Direction dir);
 
-        int x, y;
+        
 };
