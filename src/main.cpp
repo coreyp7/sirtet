@@ -6,24 +6,25 @@
 
 /* Project includes */
 #include "include/util.h"
+#include "include/Tile.h"
+
+int init();
+void cleanup();
 
 enum Direction {
     UP, DOWN, LEFT, RIGHT
 };
 
-typedef struct {
-    int x, y;
-} Pair;
+// typedef struct {
+//     int x, y;
+// } Pair;
 
-typedef struct {
-    int x, y; 
-    Pair blocks[4];
-} Piece; // right now hardcoded to one type of piece
+// typedef struct {
+//     int x, y; 
+//     Pair blocks[4];
+// } Piece; // right now hardcoded to one type of piece
 
-int init();
-SDL_Rect* getTileRect(int x, int y);
-void fillGrid();
-void renderPiece(Piece *piece);
+
 
 const int WINDOW_WIDTH = 1080;
 const int WINDOW_HEIGHT = 720;
@@ -36,58 +37,50 @@ const int TILE_SIZE = 25;
 SDL_Window *window;
 SDL_Renderer *renderer;
 
-Pair pair = {1, 1};
 
-Piece piece = {
-    0,
-    1,
-    {Pair{piece.x, piece.y-1}, Pair{piece.x+1, piece.y}, Pair{piece.x+1, piece.y+1}}
-};
+Tile grid[GRID_WIDTH * GRID_HEIGHT]; // 0 - 199
 
+// void renderPiece(Piece *piece){
+//     // Render piece at base position
+//     SDL_RenderDrawRect(renderer, getTileRect(piece->x, piece->y));
 
-SDL_Rect grid[GRID_WIDTH * GRID_HEIGHT]; // 0 - 199
+//     Pair *currPair = piece->blocks;
+//     for(int i=0; i<3; i++){
+//         SDL_RenderDrawRect(renderer, getTileRect(currPair->x, currPair->y));
+//         currPair++;
+//     }
+//     //currPair = NULL;
+// }
 
-void renderPiece(Piece *piece){
-    // Render piece at base position
-    SDL_RenderDrawRect(renderer, getTileRect(piece->x, piece->y));
+// void movePiece(Piece *piece, Direction direction){
+//     int xMove = 0;
+//     int yMove = 0;
 
-    Pair *currPair = piece->blocks;
-    for(int i=0; i<3; i++){
-        SDL_RenderDrawRect(renderer, getTileRect(currPair->x, currPair->y));
-        currPair++;
-    }
-    //currPair = NULL;
-}
+//     switch (direction){
+//         case UP:
+//             yMove--;
+//             break;
+//         case DOWN:
+//             yMove++;
+//             break;
+//         case LEFT:
+//             xMove--;
+//             break;
+//         case RIGHT:
+//             xMove++;
+//             break;
+//     }
 
-void movePiece(Piece *piece, Direction direction){
-    int xMove = 0;
-    int yMove = 0;
+//     piece->x += xMove;
+//     piece->y += yMove;
 
-    switch (direction){
-        case UP:
-            yMove--;
-            break;
-        case DOWN:
-            yMove++;
-            break;
-        case LEFT:
-            xMove--;
-            break;
-        case RIGHT:
-            xMove++;
-            break;
-    }
-
-    piece->x += xMove;
-    piece->y += yMove;
-
-    Pair *currPair = piece->blocks;
-    for(int i=0; i<3; i++){
-        currPair->x += xMove;
-        currPair->y += yMove;
-        currPair++;
-    }
-}
+//     Pair *currPair = piece->blocks;
+//     for(int i=0; i<3; i++){
+//         currPair->x += xMove;
+//         currPair->y += yMove;
+//         currPair++;
+//     }
+// }
 
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
@@ -95,16 +88,17 @@ void fillGrid(){
         for(int column=0; column<GRID_WIDTH; column++){
 
             int rowStart = row * GRID_WIDTH; // first tile pos in this row
-            grid[rowStart + column] = SDL_Rect{column*TILE_SIZE, row*TILE_SIZE, TILE_SIZE, TILE_SIZE};
+            // grid[rowStart + column] = SDL_Rect{column*TILE_SIZE, row*TILE_SIZE, TILE_SIZE, TILE_SIZE};
+            grid[rowStart + column] = Tile{column, row, NULL};
         }
     }
-    printf("(%i, %i)", grid[(GRID_WIDTH * GRID_HEIGHT)-1].x, grid[(GRID_WIDTH * GRID_HEIGHT)-1].y);
+    //printf("(%i, %i)", grid[(GRID_WIDTH * GRID_HEIGHT)-1].x, grid[(GRID_WIDTH * GRID_HEIGHT)-1].y);
 }
 
 // Get pointer to rect at position specified.
 // (Top left going down)
 // Returns NULL if the requested grid position is invalid.
-SDL_Rect* getTileRect(int x, int y){
+Tile* getTileRect(int x, int y){
     if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
         return NULL;
     }
@@ -129,8 +123,12 @@ void gameLoop(){
             WINDOW_HEIGHT - (GRID_HEIGHT*TILE_SIZE) - 50,
             GRID_WIDTH*TILE_SIZE, GRID_HEIGHT*TILE_SIZE
     };
+
+    Uint32 startOfFrame;
+    Uint32 endOfFrame;
     
     while(!quit){
+
         // event loop
         while(SDL_PollEvent(&event) != 0){
             switch(event.type){
@@ -138,16 +136,16 @@ void gameLoop(){
                     quit = true;
                     break;
                 case SDL_KEYDOWN:
-                    Direction dir;
-                    if(event.key.keysym.sym == SDLK_w){
-                        movePiece(&piece, UP);
-                    } else if(event.key.keysym.sym == SDLK_s){
-                        movePiece(&piece, DOWN);
-                    } else if(event.key.keysym.sym == SDLK_a){
-                        movePiece(&piece, LEFT);
-                    } else if(event.key.keysym.sym == SDLK_d){
-                        movePiece(&piece, RIGHT);
-                    }
+                    // Direction dir;
+                    // if(event.key.keysym.sym == SDLK_w){
+                    //     movePiece(&piece, UP);
+                    // } else if(event.key.keysym.sym == SDLK_s){
+                    //     movePiece(&piece, DOWN);
+                    // } else if(event.key.keysym.sym == SDLK_a){
+                    //     movePiece(&piece, LEFT);
+                    // } else if(event.key.keysym.sym == SDLK_d){
+                    //     movePiece(&piece, RIGHT);
+                    // }
                     break;
             }
         }
@@ -156,48 +154,26 @@ void gameLoop(){
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
+        // Start rendering tetris grid, pieces, etc.
         SDL_RenderSetViewport(renderer, &gridViewport);
 
         // render grid
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
-            if(SDL_RenderDrawRect(renderer, &grid[i])<0){
+            SDL_Rect rect = {grid[i].x * TILE_SIZE, grid[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+            if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
             }
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        // SDL_RenderDrawRect(renderer, getTileRect(0, 0));
-        // SDL_RenderDrawRect(renderer, getTileRect(0, 1));
-        // SDL_RenderDrawRect(renderer, getTileRect(1, 1));
-        // SDL_RenderDrawRect(renderer, getTileRect(1, 2));
-
-        // SDL_RenderDrawRect(renderer, getTileRect(piece.x, piece.y));
-        // Pair *currPair = piece.blocks;
-        // for(int i=0; i<4; i++){
-        //     SDL_RenderDrawRect(renderer, getTileRect(currPair->x, currPair->y));
-        //     currPair++;
-        // }
-        
-        renderPiece(&piece);
-
-
-
-        // SDL_Rect test = { 0, 0, 100, 100 };
-        // SDL_RenderSetViewport(renderer, &windowViewport);
-        // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        // SDL_RenderDrawRect(renderer, NULL);
-
+        //renderPiece(&piece);
         SDL_RenderPresent(renderer);
+
     }
     
 }
 
-void cleanup(){
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-}
 
 int main(int argc, char* args[]){
     int good = init();
@@ -228,7 +204,7 @@ int init(){
         return -2;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if(renderer == NULL){
 		printf( "Renderer couldn't be created, SDL Error: %s\n", SDL_GetError() );
         return -3;
@@ -236,4 +212,10 @@ int init(){
 
     // TODO: later I'll init SDL_img and all the other stuff too.
     return 0;
+}
+
+void cleanup(){
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }
