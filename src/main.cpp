@@ -97,6 +97,23 @@ Tile* getTileRect(int x, int y){
     return &grid[rowStart + x];
 }
 
+void handleInput(SDL_Keycode key){
+    switch(key){
+        case SDLK_w:
+            testPiece.move(UP);
+            break;
+        case SDLK_a:
+            testPiece.move(LEFT);
+            break;
+        case SDLK_s:
+            testPiece.move(DOWN);
+            break;
+        case SDLK_d:
+            testPiece.move(RIGHT);
+            break;
+    }
+}
+
 
 void gameLoop(){
     bool quit = false;
@@ -126,15 +143,7 @@ void gameLoop(){
                     quit = true;
                     break;
                 case SDL_KEYDOWN:
-                    if(event.key.keysym.sym == SDLK_w){
-                        testPiece.move(UP);
-                    } else if(event.key.keysym.sym == SDLK_s){
-                        testPiece.move(DOWN);
-                    } else if(event.key.keysym.sym == SDLK_a){
-                        testPiece.move(LEFT);
-                    } else if(event.key.keysym.sym == SDLK_d){
-                        testPiece.move(RIGHT);
-                    }
+                    handleInput(event.key.keysym.sym);
                     break;
             }
         }
