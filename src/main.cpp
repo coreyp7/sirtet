@@ -3,6 +3,10 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include <stdio.h>
+#include <sstream>
+
+/* */
+#include "include/Text.h"
 
 /* Project includes */
 #include "include/Piece.h"
@@ -25,6 +29,8 @@ const int TILE_SIZE = 25;
 
 SDL_Window *window;
 SDL_Renderer *renderer;
+TTF_Font* globalFont;
+const SDL_Color SDL_COLOR_WHITE = {255, 255, 255, 255};
 
 
 Tile grid[GRID_WIDTH * GRID_HEIGHT]; // 0 - 199
@@ -165,6 +171,11 @@ void gameLoop(){
             if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
             }
+            // Text text = Text(renderer, globalFont, SDL_COLOR_WHITE);
+            // std::ostringstream oss;
+            // oss << i;
+            // text.changeText(oss.str());
+            // text.render(rect.x, rect.y);
         }
 
         // render piece
@@ -175,6 +186,13 @@ void gameLoop(){
             if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
             }
+            Text *text = new Text(renderer, globalFont, SDL_COLOR_WHITE);
+            std::ostringstream oss;
+            oss << i;
+            text->changeText(oss.str());
+            text->render(rect.x, rect.y);
+            text->~Text();
+
             block++;
         }
 
@@ -225,6 +243,13 @@ int init(){
     if( TTF_Init() == -1){
         printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
         return -5;
+    }
+
+    // load font into global font
+    globalFont = TTF_OpenFont("assets/fonts/Lato-Black.ttf", 16);
+    if(globalFont == NULL){
+		printf( "Failed to load lato black: %s\n", TTF_GetError() );
+        return -7;
     }
 
     // TODO: later I'll init SDL_img and all the other stuff too.

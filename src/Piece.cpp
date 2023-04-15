@@ -120,24 +120,33 @@ void Piece::rotateCW(){
             break;
         case DOWN:
             // move 0 & 3
-            blocks[0].x -= 2;
-            blocks[3].y += 2;
+            // blocks[0].x -= 2;
+            // blocks[3].y += 2;
+            // facing = LEFT;
+
+            blocks[3].x--;
+            blocks[3].y++;
+            blocks[1].y--;
+            blocks[0].y -= 2;
+            blocks[0].x--;
             facing = LEFT;
             
-            if(blocks[0].x < 0){ // against left wall
-                blocks[0].x++;
-                blocks[1].x++;
-                blocks[2].x++;
-                blocks[3].x++;
-                facing = RIGHT;
-            }
+            // if(blocks[0].x < 0){ // against left wall
+            //     blocks[0].x++;
+            //     blocks[1].x++;
+            //     blocks[2].x++;
+            //     blocks[3].x++;
+            //     facing = RIGHT;
+            // }
 
             break;
         case LEFT:
             // move 0 & 1
-            blocks[0].y--;
+            blocks[0].x--;
+            blocks[0].y++;
             blocks[1].x -= 2;
-            blocks[1].y -= 1;
+            blocks[3].x++;
+            blocks[3].y++;
             facing = UP;
             break;
     }
