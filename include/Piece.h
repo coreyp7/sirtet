@@ -12,6 +12,7 @@ class Piece {
         Piece(int x, int y);
         void move(Direction dir);
         void rotateCW();
+        void rotateCCW();
 
         
 };

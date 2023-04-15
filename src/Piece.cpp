@@ -36,8 +36,7 @@ void Piece::move(Direction dir){
     }
 }
 
-void Piece::rotateCW(){
-
+void Piece::rotateCCW(){
     switch(facing){
         case UP:
             // move 0 & 1
@@ -49,7 +48,7 @@ void Piece::rotateCW(){
                 blocks[1].x += 2;
                 blocks[1].y += 1;
                 facing = RIGHT;
-            } else { // rotate it backwards, almost as if we were facing DOWN
+            } else { // rotate it backwards, as if we were facing DOWN
                 blocks[0].x--;
                 blocks[0].y++;
                 blocks[1].x++;
@@ -69,9 +68,70 @@ void Piece::rotateCW(){
             break;
         case DOWN:
             // move 0 & 3
-            blocks[0].x -=2;
+            if((blocks[0].x - 2 < 0) && (blocks[3].y + 2 > gridHeight)){
+                blocks[0].x -= 2;
+                blocks[3].y += 2;
+                facing = LEFT;
+            } else { // rotate it fowards, as if we were facing UP
+                blocks[0].x++;
+                blocks[1].x++;
+                blocks[2].x++;
+                blocks[3].x++;
+                blocks[3].y += 2;
+                facing = RIGHT;
+            }
+            break;
+        case LEFT:
+            // move 0 & 1
+            blocks[0].y--;
+            blocks[1].x -= 2;
+            blocks[1].y -= 1;
+            facing = UP;
+            break;
+    }
+}
+
+// TODO: move this into implementations of abstract class (whatever that is in c++)
+void Piece::rotateCW(){
+
+    switch(facing){
+        case UP:
+            // move 0 & 1
+            blocks[0].y++;
+            blocks[1].x += 2;
+            blocks[1].y += 1;
+            facing = RIGHT;
+
+            if(blocks[1].x >= gridWidth){ // against right wall
+                blocks[0].x--;
+                blocks[1].x--;
+                blocks[2].x--;
+                blocks[3].x--;
+                facing = LEFT;
+            }
+
+            break;
+        case RIGHT:
+            // move 0 & 3
+            blocks[0].x += 2;
+            blocks[3].y -= 2;
+
+            facing = DOWN;
+            break;
+        case DOWN:
+            // move 0 & 3
+            blocks[0].x -= 2;
             blocks[3].y += 2;
             facing = LEFT;
+            
+            if(blocks[0].x < 0){ // against left wall
+                blocks[0].x++;
+                blocks[1].x++;
+                blocks[2].x++;
+                blocks[3].x++;
+                facing = RIGHT;
+            }
+
             break;
         case LEFT:
             // move 0 & 1
