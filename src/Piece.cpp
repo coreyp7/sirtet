@@ -41,11 +41,24 @@ void Piece::rotateCW(){
     switch(facing){
         case UP:
             // move 0 & 1
-            blocks[0].y++;
-            blocks[1].x += 2;
-            blocks[1].y += 1;
 
-            facing = RIGHT;
+            if((blocks[0].y+1 < gridHeight) && 
+            (blocks[1].y+1 < gridHeight) && 
+            (blocks[1].x+2 < gridWidth)){
+                blocks[0].y++;
+                blocks[1].x += 2;
+                blocks[1].y += 1;
+                facing = RIGHT;
+            } else { // rotate it backwards, almost as if we were facing DOWN
+                blocks[0].x--;
+                blocks[0].y++;
+                blocks[1].x++;
+                blocks[1].y++;
+                blocks[2].x--;
+                blocks[3].x--;
+                facing = LEFT;
+            }
+
             break;
         case RIGHT:
             // move 0 & 3

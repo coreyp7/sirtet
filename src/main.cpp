@@ -221,6 +221,11 @@ int init(){
 		printf( "Renderer couldn't be created, SDL Error: %s\n", SDL_GetError() );
         return -3;
     }
+    
+    if( TTF_Init() == -1){
+        printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+        return -5;
+    }
 
     // TODO: later I'll init SDL_img and all the other stuff too.
     return 0;
