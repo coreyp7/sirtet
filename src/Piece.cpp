@@ -1,10 +1,15 @@
 #include "include/Piece.h"
+#include "include/util.h"
 
-Piece::Piece(int x, int y){
+Piece::Piece(int x, int y, Tile (&grid)[200]){
     blocks[0] = Block{x, y};
     blocks[1] = Block{x, y-1};
     blocks[2] = Block{x+1, y};
     blocks[3] = Block{x+1, y+1};
+
+    for(int i=0; i<4; i++){
+        getTile(blocks[i].x, blocks[i].y, grid)->block = &blocks[i];
+    }
 
     facing = UP;
 }

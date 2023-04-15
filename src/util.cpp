@@ -1,7 +1,15 @@
 #include "include/util.h"
 
-void test(){
-    printf("Hello from sdl_setup.cpp!");
+// Get pointer to rect at position specified.
+// (Top left going down)
+// Returns NULL if the requested grid position is invalid.
+Tile* getTile(int x, int y, Tile (&grid)[GRID_WIDTH*GRID_HEIGHT]){
+    if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
+        return NULL; // WAS NULL
+    }
+
+    int rowStart = y * GRID_WIDTH;
+    return &grid[rowStart + x];
 }
 
 // int init(SDL_Window* window, SDL_Renderer *renderer, int windowWidth, int windowHeight){

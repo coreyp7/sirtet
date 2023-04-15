@@ -7,6 +7,7 @@
 
 /* */
 #include "include/Text.h"
+#include "include/util.h"
 
 /* Project includes */
 #include "include/Piece.h"
@@ -22,8 +23,8 @@ void cleanup();
 const int WINDOW_WIDTH = 1080;
 const int WINDOW_HEIGHT = 720;
 
-const int GRID_WIDTH = 10;
-const int GRID_HEIGHT = 20;
+// const int GRID_WIDTH = 10;
+// const int GRID_HEIGHT = 20;
 
 const int TILE_SIZE = 25;
 
@@ -31,52 +32,10 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 TTF_Font* globalFont;
 const SDL_Color SDL_COLOR_WHITE = {255, 255, 255, 255};
+const SDL_Color SDL_COLOR_GREEN = {0, 255, 0, 255};
 
 
 Tile grid[GRID_WIDTH * GRID_HEIGHT]; // 0 - 199
-Piece testPiece = Piece{1, 1};
-
-// void renderPiece(Piece *piece){
-//     // Render piece at base position
-//     SDL_RenderDrawRect(renderer, getTileRect(piece->x, piece->y));
-
-//     Pair *currPair = piece->blocks;
-//     for(int i=0; i<3; i++){
-//         SDL_RenderDrawRect(renderer, getTileRect(currPair->x, currPair->y));
-//         currPair++;
-//     }
-//     //currPair = NULL;
-// }
-
-// void movePiece(Piece *piece, Direction direction){
-//     int xMove = 0;
-//     int yMove = 0;
-
-//     switch (direction){
-//         case UP:
-//             yMove--;
-//             break;
-//         case DOWN:
-//             yMove++;
-//             break;
-//         case LEFT:
-//             xMove--;
-//             break;
-//         case RIGHT:
-//             xMove++;
-//             break;
-//     }
-
-//     piece->x += xMove;
-//     piece->y += yMove;
-
-//     Pair *currPair = piece->blocks;
-//     for(int i=0; i<3; i++){
-//         currPair->x += xMove;
-//         currPair->y += yMove;
-//         currPair++;
-//     }
-// }
 
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
@@ -91,37 +50,37 @@ void fillGrid(){
     //printf("(%i, %i)", grid[(GRID_WIDTH * GRID_HEIGHT)-1].x, grid[(GRID_WIDTH * GRID_HEIGHT)-1].y);
 }
 
-// Get pointer to rect at position specified.
-// (Top left going down)
-// Returns NULL if the requested grid position is invalid.
-Tile* getTileRect(int x, int y){
-    if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
-        return NULL;
-    }
+// // Get pointer to rect at position specified.
+// // (Top left going down)
+// // Returns NULL if the requested grid position is invalid.
+// Tile* getTile(int x, int y){
+//     if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
+//         return NULL;
+//     }
 
-    int rowStart = y * GRID_WIDTH;
-    return &grid[rowStart + x];
-}
+//     int rowStart = y * GRID_WIDTH;
+//     return &grid[rowStart + x];
+// }
 
-void handleInput(SDL_Keycode key){
+void handleInput(SDL_Keycode key, Piece *piece){
     switch(key){
         case SDLK_w:
-            testPiece.move(UP);
+            piece->move(UP);
             break;
         case SDLK_a:
-            testPiece.move(LEFT);
+            piece->move(LEFT);
             break;
         case SDLK_s:
-            testPiece.move(DOWN);
+            piece->move(DOWN);
             break;
         case SDLK_d:
-            testPiece.move(RIGHT);
+            piece->move(RIGHT);
             break;
         case SDLK_p:
-            testPiece.rotateCW();
+            piece->rotateCW();
             break;
         case SDLK_o:
-            testPiece.rotateCCW();
+            piece->rotateCCW();
             break;
     }
 }
@@ -145,6 +104,11 @@ void gameLoop(){
 
     Uint32 startOfFrame;
     Uint32 endOfFrame;
+
+    Piece testPiece = Piece{1, 1, grid};
+
+    Block *blockTest = new Block(5, 15);
+    getTile(5, 15, grid)->block = blockTest; // manually insert static block
     
     while(!quit){
 
@@ -155,7 +119,7 @@ void gameLoop(){
                     quit = true;
                     break;
                 case SDL_KEYDOWN:
-                    handleInput(event.key.keysym.sym);
+                    handleInput(event.key.keysym.sym, &testPiece);
                     break;
             }
         }
@@ -171,9 +135,26 @@ void gameLoop(){
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
             SDL_Rect rect = {grid[i].x * TILE_SIZE, grid[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+
+            if(grid[i].block != NULL){
+                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            }
+
             if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
             }
+
+            if(grid[i].block != NULL){
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+                Text *text = new Text(renderer, globalFont, SDL_COLOR_GREEN);
+                // std::ostringstream oss;
+                // oss << "full";
+                text->changeText("full");
+                text->render(rect.x, rect.y);
+                text->~Text();
+            }
+
             // Text text = Text(renderer, globalFont, SDL_COLOR_WHITE);
             // std::ostringstream oss;
             // oss << i;
