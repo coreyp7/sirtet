@@ -6,6 +6,7 @@
 #pragma once
 #include <include/Tile.h>
 #include <stddef.h>
+#include "array"
 
 const int GRID_WIDTH = 10;
 const int GRID_HEIGHT = 20;
@@ -15,4 +16,4 @@ const int GRID_HEIGHT = 20;
 // Get pointer to rect at position specified.
 // (Top left going down)
 // Returns NULL if the requested grid position is invalid.
-Tile* getTile(int x, int y, Tile (&grid)[GRID_WIDTH*GRID_HEIGHT]);
+Tile* getTile(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid);

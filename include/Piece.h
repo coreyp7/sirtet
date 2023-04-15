@@ -2,15 +2,19 @@
 #include <include/Direction.h>
 #include <include/Block.h>
 #include <include/Tile.h>
+#include <include/util.h>
+#include <array>
 
 class Piece {
     public:
         Block blocks[4]; //hardcoding rn to one type of piece
         Direction facing;
-        int gridHeight = 20; // hardcoded for now
-        int gridWidth = 10; // hardcoded for now
+        // int gridHeight = 20; // hardcoded for now
+        // int gridWidth = 10; // hardcoded for now
 
-        Piece(int x, int y, Tile (&grid)[200]);
+        std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid;
+
+        Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid);
         void move(Direction dir);
         void rotateCW();
         void rotateCCW();

@@ -4,6 +4,7 @@
 #include <SDL_mixer.h>
 #include <stdio.h>
 #include <sstream>
+#include <array>
 
 /* */
 #include "include/Text.h"
@@ -35,7 +36,7 @@ const SDL_Color SDL_COLOR_WHITE = {255, 255, 255, 255};
 const SDL_Color SDL_COLOR_GREEN = {0, 255, 0, 255};
 
 
-Tile grid[GRID_WIDTH * GRID_HEIGHT]; // 0 - 199
+std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
 
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
@@ -105,10 +106,10 @@ void gameLoop(){
     Uint32 startOfFrame;
     Uint32 endOfFrame;
 
-    Piece testPiece = Piece{1, 1, grid};
+    Piece testPiece = Piece{1, 1, &grid};
 
     Block *blockTest = new Block(5, 15);
-    getTile(5, 15, grid)->block = blockTest; // manually insert static block
+    getTile(5, 15, &grid)->block = blockTest; // manually insert static block
     
     while(!quit){
 

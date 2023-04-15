@@ -3,13 +3,13 @@
 // Get pointer to rect at position specified.
 // (Top left going down)
 // Returns NULL if the requested grid position is invalid.
-Tile* getTile(int x, int y, Tile (&grid)[GRID_WIDTH*GRID_HEIGHT]){
+Tile* getTile(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
         return NULL; // WAS NULL
     }
 
     int rowStart = y * GRID_WIDTH;
-    return &grid[rowStart + x];
+    return &grid->at(rowStart + x);
 }
 
 // int init(SDL_Window* window, SDL_Renderer *renderer, int windowWidth, int windowHeight){

@@ -1,11 +1,13 @@
 #include "include/Piece.h"
 #include "include/util.h"
 
-Piece::Piece(int x, int y, Tile (&grid)[200]){
+Piece::Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     blocks[0] = Block{x, y};
     blocks[1] = Block{x, y-1};
     blocks[2] = Block{x+1, y};
     blocks[3] = Block{x+1, y+1};
+
+    this->grid = grid;
 
     for(int i=0; i<4; i++){
         getTile(blocks[i].x, blocks[i].y, grid)->block = &blocks[i];
