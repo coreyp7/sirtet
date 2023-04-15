@@ -111,6 +111,9 @@ void handleInput(SDL_Keycode key){
         case SDLK_d:
             testPiece.move(RIGHT);
             break;
+        case SDLK_p:
+            testPiece.rotateCW();
+            break;
     }
 }
 
