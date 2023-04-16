@@ -9,10 +9,6 @@ Piece::Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
 
     this->grid = grid;
 
-    // for(int i=0; i<4; i++){
-    //     getTile(blocks[i].x, blocks[i].y, grid)->block = &blocks[i];
-    // }
-
     facing = UP;
 }
 
@@ -54,7 +50,6 @@ void Piece::move(Direction dir){
 
 // Will return if the specified Tile position has a block in it.
 bool Piece::isEmpty(int x, int y){
-    //return getTile(x, y, grid)->block == NULL;
     return isEmptyAndInBounds(x, y);
 }
 
@@ -143,41 +138,65 @@ void Piece::rotateCCW(){
     switch(facing){
         case UP:
             // move 0 & 1
-            blocks[0].y++;
-            blocks[1].x += 2;
-            blocks[1].y += 1;
-            facing = LEFT;
+
+            if(isEmpty(blocks[1].x+2, blocks[1].y+1) &&
+                isEmpty(blocks[0].x, blocks[0].y+1)){
+                blocks[0].y++;
+                blocks[1].x += 2;
+                blocks[1].y += 1;
+                facing = LEFT;
+            } else {
+                printf("not allowed");
+            }
 
             break;
         case LEFT:
             // move 0 & 3
-            blocks[0].x += 2;
-            blocks[3].y -= 2;
-            facing = DOWN;
+            
+            if(isEmpty(blocks[0].x+2, blocks[0].y) &&
+                isEmpty(blocks[3].x, blocks[3].y-2)){
+                blocks[0].x += 2;
+                blocks[3].y -= 2;
+                facing = DOWN;
+            } else {
+                printf("not allowed");
+            }
 
             break;
         case DOWN:
             // move 0 & 3
-            // blocks[0].x -= 2;
-            // blocks[3].y += 2;
-            // facing = LEFT;
 
-            blocks[3].x--;
-            blocks[3].y++;
-            blocks[1].y--;
-            blocks[0].y -= 2;
-            blocks[0].x--;
-            facing = RIGHT;
+            if(isEmpty(blocks[0].x-1, blocks[0].y-2) &&
+                isEmpty(blocks[1].x, blocks[1].y-1) &&
+                isEmpty(blocks[3].x-1, blocks[3].y+1)
+            ){
+                blocks[3].x--;
+                blocks[3].y++;
+                blocks[1].y--;
+                blocks[0].y -= 2;
+                blocks[0].x--;
+                facing = RIGHT;
+            } else {
+                printf("not allowed");
+            }
 
             break;
         case RIGHT:
             // move 0 & 1
-            blocks[0].x--;
-            blocks[0].y++;
-            blocks[1].x -= 2;
-            blocks[3].x++;
-            blocks[3].y++;
-            facing = UP;
+
+            if(isEmpty(blocks[0].x-1, blocks[0].y+1) &&
+                isEmpty(blocks[1].x-2, blocks[1].y) &&
+                isEmpty(blocks[3].x+1, blocks[3].y+1)
+            ){
+                blocks[0].x--;
+                blocks[0].y++;
+                blocks[1].x -= 2;
+                blocks[3].x++;
+                blocks[3].y++;
+                facing = UP;
+            } else {
+                printf("not allowed");
+            }
             break;
     }
 }
