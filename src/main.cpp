@@ -196,8 +196,8 @@ void gameLoop(){
 
         SDL_RenderSetViewport(renderer, &windowViewport);
         std::ostringstream oss;
-        oss << pieceSpawnTime;
-        info.changeText(oss.str().c_str());
+        oss << currPiece->facing;
+        info.changeText("Facing: "+oss.str());
         info.render(0, 0);
 
         // Start rendering tetris grid, pieces, etc.
@@ -252,6 +252,7 @@ void gameLoop(){
 
             // block = currPiece->blocks[i];
         }
+
 
         // SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         //renderPiece(&piece);
