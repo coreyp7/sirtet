@@ -45,7 +45,10 @@ void T_Piece::rotateCW() {
             }
             break;
         case DOWN: // this one has the most moves
-            if(isEmpty(pivot.x-1, pivot.y)){
+            if(isEmpty(pivot.x-1, pivot.y) &&
+                isEmpty(pivot.x, pivot.y-1) &&
+                isEmpty(pivot.x, pivot.y+1)
+            ){
                 blocks[1]->x = pivot.x-1;
                 blocks[1]->y = pivot.y;
                 blocks[2]->x = pivot.x;
@@ -58,7 +61,7 @@ void T_Piece::rotateCW() {
             }
             break;
         case LEFT:
-            if(isEmpty(pivot.x, pivot.y+1)){
+            if(isEmpty(pivot.x+1, pivot.y)){
                 blocks[3]->x = pivot.x+1;
                 blocks[3]->y = pivot.y;
                 facing = UP;
@@ -75,7 +78,10 @@ void T_Piece::rotateCCW(){
     switch(facing){
         case UP:
             // Check if there's a collision where we're going to.
-            if(isEmpty(pivot.x-1, pivot.y)){
+            if(isEmpty(pivot.x-1, pivot.y) &&
+                isEmpty(pivot.x, pivot.y-1) && 
+                isEmpty(pivot.x, pivot.y+1)
+            ){
                 blocks[1]->x = pivot.x-1;
                 blocks[1]->y = pivot.y;
                 blocks[2]->x = pivot.x;
@@ -89,7 +95,8 @@ void T_Piece::rotateCCW(){
 
             break;
         case RIGHT:
-            if(isEmpty(pivot.x, pivot.y+1)){
+            printf("pivot.x-1:%i, pivot.y:%i", pivot.x-1, pivot.y);
+            if(isEmpty(pivot.x-1, pivot.y)){
                 blocks[1]->x = pivot.x-1;
                 blocks[1]->y = pivot.y;
                 facing = UP;
@@ -98,7 +105,7 @@ void T_Piece::rotateCCW(){
             }
             break;
         case DOWN:
-            if(isEmpty(pivot.x, pivot.y+1)){
+            if(isEmpty(pivot.x, pivot.y-1)){
                 blocks[2]->x = pivot.x;
                 blocks[2]->y = pivot.y-1;
                 facing = RIGHT;
@@ -107,7 +114,10 @@ void T_Piece::rotateCCW(){
             }
             break;
         case LEFT:
-            if(isEmpty(pivot.x-1, pivot.y)){
+            if(isEmpty(pivot.x, pivot.y+1) && 
+                isEmpty(pivot.x-1, pivot.y) &&
+                isEmpty(pivot.x+1, pivot.y)
+            ){
                 blocks[1]->x = pivot.x;
                 blocks[1]->y = pivot.y+1;
                 blocks[2]->x = pivot.x-1;
