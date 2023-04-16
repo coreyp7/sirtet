@@ -3,6 +3,7 @@
 #include <include/Block.h>
 #include <include/Tile.h>
 #include <include/util.h>
+#include <stdio.h>
 #include <array>
 
 class Piece {
@@ -18,6 +19,8 @@ class Piece {
         void move(Direction dir);
         void rotateCW();
         void rotateCCW();
+        bool isEmpty(int x, int y);
+        bool isEmptyAndInBounds(int x, int y);
 
         
 };

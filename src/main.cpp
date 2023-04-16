@@ -103,15 +103,21 @@ void gameLoop(){
             GRID_WIDTH*TILE_SIZE, GRID_HEIGHT*TILE_SIZE
     };
 
+    Text info = Text(renderer, globalFont, SDL_COLOR_WHITE);
+
     Uint32 startOfFrame;
     Uint32 endOfFrame;
 
     Piece testPiece = Piece{1, 1, &grid};
 
-    Block *blockTest = new Block(5, 15);
-    getTile(5, 15, &grid)->block = blockTest; // manually insert static block
-    Block *blockTest2 = new Block(5, 5);
-    getTile(5, 5, &grid)->block = blockTest2; // manually insert static block
+    // Block *blockTest = new Block(5, 15);
+    // getTile(5, 15, &grid)->block = blockTest; // manually insert static block
+    // Block *blockTest2 = new Block(5, 5);
+    // getTile(5, 5, &grid)->block = blockTest2; // manually insert static block
+    Block *blockTest = new Block(5, 5);
+    getTile(5, 5, &grid)->block = blockTest;
+    blockTest = new Block(5, 4);
+    getTile(5, 4, &grid)->block = blockTest;
     
     while(!quit){
 
