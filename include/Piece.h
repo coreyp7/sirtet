@@ -18,11 +18,11 @@ class Piece {
         std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid;
 
         
-
+        Piece();
         Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid);
         bool move(Direction dir);
-        virtual void rotateCW();
-        virtual void rotateCCW();
+        virtual void rotateCW() = 0;
+        virtual void rotateCCW() = 0;
         bool isEmpty(int x, int y);
         bool isEmptyAndInBounds(int x, int y);
         // Call when Piece has landed and control is being removed from this piece.

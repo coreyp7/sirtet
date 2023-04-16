@@ -12,6 +12,10 @@ Piece::Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     facing = UP;
 }
 
+Piece::Piece(){
+    // for when you create a Piece from a subclass and don't need anything done for you here.
+}
+
 bool Piece::move(Direction dir){
     int xMove = 0;
     int yMove = 0;
@@ -68,145 +72,153 @@ bool Piece::isEmptyAndInBounds(int x, int y){
     return(getTile(x, y, grid)->block == NULL);
 }
 
-void Piece::rotateCW(){
-    Block pivot = *blocks[2]; // PIVOT IS 2
+// void Piece::rotateCW(){
+//     printf("shouldn't be called here\n");
+// }
 
-    switch(facing){
-        case UP:
-            // move 0 & 1
+// void Piece::rotateCCW(){
+//     printf("shouldn't be called here\n");
+// }
 
-            // HEY COREY:
-            // do the same thing you did in move here.
-            // feels inefficient but is a proven way to check for collision.
-            // shouldn't ever be very much, so should be good.
+// void Piece::rotateCW(){
+//     Block pivot = *blocks[2]; // PIVOT IS 2
 
-            // Check if there's a collision where we're going to.
-            if(isEmpty(pivot.x, pivot.y-1) &&
-                isEmpty(pivot.x+1, pivot.y-1) &&
-                isEmpty(pivot.x-1, pivot.y)
-            ){
-                blocks[0]->x = pivot.x;
-                blocks[0]->y = pivot.y-1;
-                blocks[1]->x = pivot.x+1;
-                blocks[1]->y = pivot.y-1;
-                blocks[3]->x = pivot.x-1;
-                blocks[3]->y = pivot.y;
-                facing = RIGHT;
-            } else {
-                printf("not allowed");
-            }
+//     switch(facing){
+//         case UP:
+//             // move 0 & 1
 
-            break;
-        case RIGHT:
-            if(isEmpty(pivot.x+1, pivot.y+1) &&
-                isEmpty(pivot.x+1, pivot.y) &&
-                isEmpty(pivot.x, pivot.y-1)
-            ){
-                blocks[0]->x = pivot.x+1;
-                blocks[0]->y = pivot.y+1;
-                blocks[1]->x = pivot.x+1;
-                blocks[1]->y = pivot.y;
-                blocks[3]->x = pivot.x;
-                blocks[3]->y = pivot.y-1;
-                facing = DOWN;
-            } else {
-                printf("not allowed");
-            }
-            break;
-        case DOWN:
-            if(isEmpty(blocks[0]->x - 2, blocks[0]->y) &&
-                isEmpty(blocks[3]->x, blocks[3]->y+2)
-            ){
-                blocks[0]->x -= 2;
-                blocks[3]->y += 2;
-                facing = LEFT;
-            } else {
-                printf("not allowed");
-            }
-            break;
-        case LEFT:
-            if(isEmpty(blocks[0]->x, blocks[0]->y-1) &&
-                isEmpty(blocks[1]->x-2, blocks[1]->y-1)
-            ){
-                blocks[0]->y--;
-                blocks[1]->x -= 2;
-                blocks[1]->y--;
-                facing = UP;
-            } else {
-                printf("not allowed");
-            }
-            break;
-    }
-}
+//             // HEY COREY:
+//             // do the same thing you did in move here.
+//             // feels inefficient but is a proven way to check for collision.
+//             // shouldn't ever be very much, so should be good.
 
-// TODO: move this into implementations of abstract class (whatever that is in c++)
-void Piece::rotateCCW(){
+//             // Check if there's a collision where we're going to.
+//             if(isEmpty(pivot.x, pivot.y-1) &&
+//                 isEmpty(pivot.x+1, pivot.y-1) &&
+//                 isEmpty(pivot.x-1, pivot.y)
+//             ){
+//                 blocks[0]->x = pivot.x;
+//                 blocks[0]->y = pivot.y-1;
+//                 blocks[1]->x = pivot.x+1;
+//                 blocks[1]->y = pivot.y-1;
+//                 blocks[3]->x = pivot.x-1;
+//                 blocks[3]->y = pivot.y;
+//                 facing = RIGHT;
+//             } else {
+//                 printf("not allowed");
+//             }
 
-    switch(facing){
-        case UP:
-            // move 0 & 1
+//             break;
+//         case RIGHT:
+//             if(isEmpty(pivot.x+1, pivot.y+1) &&
+//                 isEmpty(pivot.x+1, pivot.y) &&
+//                 isEmpty(pivot.x, pivot.y-1)
+//             ){
+//                 blocks[0]->x = pivot.x+1;
+//                 blocks[0]->y = pivot.y+1;
+//                 blocks[1]->x = pivot.x+1;
+//                 blocks[1]->y = pivot.y;
+//                 blocks[3]->x = pivot.x;
+//                 blocks[3]->y = pivot.y-1;
+//                 facing = DOWN;
+//             } else {
+//                 printf("not allowed");
+//             }
+//             break;
+//         case DOWN:
+//             if(isEmpty(blocks[0]->x - 2, blocks[0]->y) &&
+//                 isEmpty(blocks[3]->x, blocks[3]->y+2)
+//             ){
+//                 blocks[0]->x -= 2;
+//                 blocks[3]->y += 2;
+//                 facing = LEFT;
+//             } else {
+//                 printf("not allowed");
+//             }
+//             break;
+//         case LEFT:
+//             if(isEmpty(blocks[0]->x, blocks[0]->y-1) &&
+//                 isEmpty(blocks[1]->x-2, blocks[1]->y-1)
+//             ){
+//                 blocks[0]->y--;
+//                 blocks[1]->x -= 2;
+//                 blocks[1]->y--;
+//                 facing = UP;
+//             } else {
+//                 printf("not allowed");
+//             }
+//             break;
+//     }
+// }
 
-            if(isEmpty(blocks[1]->x+2, blocks[1]->y+1) &&
-                isEmpty(blocks[0]->x, blocks[0]->y+1)){
-                blocks[0]->y++;
-                blocks[1]->x += 2;
-                blocks[1]->y += 1;
-                facing = LEFT;
-            } else {
-                printf("not allowed");
-            }
+// // TODO: move this into implementations of abstract class (whatever that is in c++)
+// void Piece::rotateCCW(){
 
-            break;
-        case LEFT:
-            // move 0 & 3
+//     switch(facing){
+//         case UP:
+//             // move 0 & 1
+
+//             if(isEmpty(blocks[1]->x+2, blocks[1]->y+1) &&
+//                 isEmpty(blocks[0]->x, blocks[0]->y+1)){
+//                 blocks[0]->y++;
+//                 blocks[1]->x += 2;
+//                 blocks[1]->y += 1;
+//                 facing = LEFT;
+//             } else {
+//                 printf("not allowed");
+//             }
+
+//             break;
+//         case LEFT:
+//             // move 0 & 3
             
-            if(isEmpty(blocks[0]->x+2, blocks[0]->y) &&
-                isEmpty(blocks[3]->x, blocks[3]->y-2)){
-                blocks[0]->x += 2;
-                blocks[3]->y -= 2;
-                facing = DOWN;
-            } else {
-                printf("not allowed");
-            }
+//             if(isEmpty(blocks[0]->x+2, blocks[0]->y) &&
+//                 isEmpty(blocks[3]->x, blocks[3]->y-2)){
+//                 blocks[0]->x += 2;
+//                 blocks[3]->y -= 2;
+//                 facing = DOWN;
+//             } else {
+//                 printf("not allowed");
+//             }
 
-            break;
-        case DOWN:
-            // move 0 & 3
+//             break;
+//         case DOWN:
+//             // move 0 & 3
 
-            if(isEmpty(blocks[0]->x-1, blocks[0]->y-2) &&
-                isEmpty(blocks[1]->x, blocks[1]->y-1) &&
-                isEmpty(blocks[3]->x-1, blocks[3]->y+1)
-            ){
-                blocks[3]->x--;
-                blocks[3]->y++;
-                blocks[1]->y--;
-                blocks[0]->y -= 2;
-                blocks[0]->x--;
-                facing = RIGHT;
-            } else {
-                printf("not allowed");
-            }
+//             if(isEmpty(blocks[0]->x-1, blocks[0]->y-2) &&
+//                 isEmpty(blocks[1]->x, blocks[1]->y-1) &&
+//                 isEmpty(blocks[3]->x-1, blocks[3]->y+1)
+//             ){
+//                 blocks[3]->x--;
+//                 blocks[3]->y++;
+//                 blocks[1]->y--;
+//                 blocks[0]->y -= 2;
+//                 blocks[0]->x--;
+//                 facing = RIGHT;
+//             } else {
+//                 printf("not allowed");
+//             }
 
-            break;
-        case RIGHT:
-            // move 0 & 1
+//             break;
+//         case RIGHT:
+//             // move 0 & 1
 
-            if(isEmpty(blocks[0]->x-1, blocks[0]->y+1) &&
-                isEmpty(blocks[1]->x-2, blocks[1]->y) &&
-                isEmpty(blocks[3]->x+1, blocks[3]->y+1)
-            ){
-                blocks[0]->x--;
-                blocks[0]->y++;
-                blocks[1]->x -= 2;
-                blocks[3]->x++;
-                blocks[3]->y++;
-                facing = UP;
-            } else {
-                printf("not allowed");
-            }
-            break;
-    }
-}
+//             if(isEmpty(blocks[0]->x-1, blocks[0]->y+1) &&
+//                 isEmpty(blocks[1]->x-2, blocks[1]->y) &&
+//                 isEmpty(blocks[3]->x+1, blocks[3]->y+1)
+//             ){
+//                 blocks[0]->x--;
+//                 blocks[0]->y++;
+//                 blocks[1]->x -= 2;
+//                 blocks[3]->x++;
+//                 blocks[3]->y++;
+//                 facing = UP;
+//             } else {
+//                 printf("not allowed");
+//             }
+//             break;
+//     }
+// }
 
 
 void Piece::cleanupLanded(){

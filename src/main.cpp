@@ -13,7 +13,9 @@
 
 /* Project includes */
 #include "include/Piece.h"
+#include "include/S_Piece.h"
 #include "include/Tile.h"
+
 
 int init();
 void cleanup();
@@ -136,7 +138,8 @@ void gameLoop(){
 
     int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
     //Piece testPiece = Piece{1, 1, &grid};
-    Piece *currPiece = new Piece{1, 1, &grid};
+    //Piece *currPiece = new Piece{1, 1, &grid};
+    Piece *currPiece = new S_Piece{1, 1, &grid};
     Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
 
     std::vector<SDL_Keycode> keysPressed;
@@ -181,7 +184,8 @@ void gameLoop(){
                 currPiece->insertBlocksAtCurrPos();
                 currPiece->cleanupLanded();
 
-                currPiece = new Piece{1, 1, &grid};
+                //currPiece = new Piece{1, 1, &grid};
+                currPiece = new S_Piece{1, 1, &grid};
             }
             pieceSpawnTime = SDL_GetTicks() + fallSpeed;
         }
