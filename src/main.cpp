@@ -110,6 +110,8 @@ void gameLoop(){
 
     Block *blockTest = new Block(5, 15);
     getTile(5, 15, &grid)->block = blockTest; // manually insert static block
+    Block *blockTest2 = new Block(5, 5);
+    getTile(5, 5, &grid)->block = blockTest2; // manually insert static block
     
     while(!quit){
 

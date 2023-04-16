@@ -9,9 +9,9 @@ Piece::Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
 
     this->grid = grid;
 
-    for(int i=0; i<4; i++){
-        getTile(blocks[i].x, blocks[i].y, grid)->block = &blocks[i];
-    }
+    // for(int i=0; i<4; i++){
+    //     getTile(blocks[i].x, blocks[i].y, grid)->block = &blocks[i];
+    // }
 
     facing = UP;
 }
@@ -35,7 +35,16 @@ void Piece::move(Direction dir){
             break;
     }
 
+    // Check if there's a collision where we're going to.
     Block *block = blocks;
+    for(int i=0; i<4; i++){
+        if(getTile(block->x + xMove, block->y + yMove, grid)->block != NULL){
+            return;
+        }
+        block++;
+    }
+
+    block = blocks;
     for(int i=0; i<4; i++){
         block->x += xMove;
         block->y += yMove;
@@ -49,6 +58,12 @@ void Piece::rotateCW(){
     switch(facing){
         case UP:
             // move 0 & 1
+
+            // HEY COREY:
+            // do the same thing you did in move here.
+            // feels inefficient but is a proven way to check for collision.
+            // shouldn't ever be very much, so should be good.
+
             blocks[0].x = pivot.x;
             blocks[0].y = pivot.y-1;
             blocks[1].x = pivot.x+1;
