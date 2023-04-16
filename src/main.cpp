@@ -184,7 +184,6 @@ void gameLoop(){
                 currPiece->insertBlocksAtCurrPos();
                 currPiece->cleanupLanded();
 
-                //currPiece = new Piece{1, 1, &grid};
                 currPiece = new S_Piece{1, 1, &grid};
             }
             pieceSpawnTime = SDL_GetTicks() + fallSpeed;

@@ -37,7 +37,7 @@ bool Piece::move(Direction dir){
 
     // Check if there's a collision where we're going to.
     Block *block;// = blocks[0];
-    for(int i=0; i<4; i++){
+    for(int i=0; i<blocks.size(); i++){
         block = blocks[i];
         if(!isEmptyAndInBounds(block->x + xMove, block->y + yMove)){
             return false;
@@ -50,7 +50,7 @@ bool Piece::move(Direction dir){
     }
 
     //block = blocks[0];
-    for(int i=0; i<4; i++){
+    for(int i=0; i<blocks.size(); i++){
         block = blocks[i];
         block->x += xMove;
         block->y += yMove;
@@ -224,7 +224,7 @@ bool Piece::isEmptyAndInBounds(int x, int y){
 void Piece::cleanupLanded(){
     // empty array of references to objects, they're in the grid now
     // and will be cleaned up later.
-    for(int i=0; i<4; i++){
+    for(int i=0; i<blocks.size(); i++){
         blocks[i] = NULL;
     }
 
@@ -234,7 +234,7 @@ void Piece::cleanupLanded(){
 // Will insert all the Blocks of this object into its current position.
 // Should only be called when a Piece has landed and you're going to get rid of it.
 int Piece::insertBlocksAtCurrPos(){
-    for(int i=0; i<4; i++){
+    for(int i=0; i<blocks.size(); i++){
         getTile(blocks[i]->x, blocks[i]->y, grid)->block = blocks[i];
     }
 }

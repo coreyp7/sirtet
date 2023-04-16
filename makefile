@@ -1,8 +1,9 @@
 FILENAME = main
 
 #OBJS specifies which files to compile as part of the project
-OBJS = src\main.cpp src\Tile.cpp src\Block.cpp src\Piece.cpp src\Text.cpp src\util.cpp
+OBJS = src\main.cpp src\Tile.cpp src\Block.cpp src\Text.cpp src\util.cpp
 
+PIECE_FILE_LIST = src\Piece.cpp src\S_Piece.cpp
 #CC specifies which compiler we're using
 CC = g++
 
@@ -28,4 +29,4 @@ OBJ_NAME = exe\tetris.exe
 
 #This is the target that compiles our executable
 all : $(OBJS)
-	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+	$(CC) $(OBJS) $(PIECE_FILE_LIST) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
