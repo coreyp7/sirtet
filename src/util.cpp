@@ -5,7 +5,7 @@
 // Returns NULL if the requested grid position is invalid.
 Tile* getTile(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
-        return NULL; // WAS NULL
+        return NULL;
     }
 
     int rowStart = y * GRID_WIDTH;

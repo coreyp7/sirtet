@@ -55,18 +55,6 @@ void fillGrid(){
     //printf("(%i, %i)", grid[(GRID_WIDTH * GRID_HEIGHT)-1].x, grid[(GRID_WIDTH * GRID_HEIGHT)-1].y);
 }
 
-// // Get pointer to rect at position specified.
-// // (Top left going down)
-// // Returns NULL if the requested grid position is invalid.
-// Tile* getTile(int x, int y){
-//     if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
-//         return NULL;
-//     }
-
-//     int rowStart = y * GRID_WIDTH;
-//     return &grid[rowStart + x];
-// }
-
 void handleInput(SDL_Keycode key, Piece *piece){
     switch(key){
         case SDLK_w:
@@ -112,6 +100,36 @@ void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
                 piece->rotateCCW();
                 break;
     }
+    }
+}
+
+// Will check the grid for any complete lines and shift the block
+// positions appropriately.
+void clearCompleteLines(){
+    int rowIndex; // start of this row
+    bool full = true; // true until proven false
+
+    std::vector<int> clearedRows;
+    // Loop through array one row at a time
+    for(int row=0; row<GRID_HEIGHT; row++){
+        full = true;
+        rowIndex = row * GRID_WIDTH; // start of this row
+
+        for(int tile=0; tile<GRID_WIDTH; tile++){
+            if(getTile(tile, row, &grid)->block == NULL){
+                full = false;
+                break;
+            }
+        }
+
+        if(full){
+                clearedRows.push_back(row);
+                // now clear this row
+                for(int tile=0; tile<GRID_WIDTH; tile++){
+                    delete getTile(tile, row, &grid)->block;
+                    getTile(tile, row, &grid)->block = NULL;
+                }
+        }
     }
 }
 
@@ -186,6 +204,9 @@ void gameLoop(){
                 currPiece->cleanupLanded();
 
                 currPiece = new T_Piece{1, 1, &grid};
+
+                // Check if grid has complete row, and clear it.
+                clearCompleteLines();
             }
             pieceSpawnTime = SDL_GetTicks() + fallSpeed;
         }
