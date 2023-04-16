@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <array>
+#include <vector>
 
 /* */
 #include "include/Text.h"
@@ -86,6 +87,31 @@ void handleInput(SDL_Keycode key, Piece *piece){
     }
 }
 
+void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
+    for(int i=0; i<keysPressed.size(); i++){
+        switch(keysPressed.at(i)){
+            // case SDLK_w:
+            //     piece->move(UP);
+            //     break;
+            case SDLK_a:
+                piece->move(LEFT);
+                break;
+            case SDLK_s:
+                piece->move(DOWN);
+                break;
+            case SDLK_d:
+                piece->move(RIGHT);
+                break;
+            case SDLK_p:
+                piece->rotateCW();
+                break;
+            case SDLK_o:
+                piece->rotateCCW();
+                break;
+    }
+    }
+}
+
 
 void gameLoop(){
     bool quit = false;
@@ -110,6 +136,11 @@ void gameLoop(){
 
     Piece testPiece = Piece{1, 1, &grid};
 
+    int fallSpeed = 500;
+    Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed;
+
+    std::vector<SDL_Keycode> keysPressed;
+
     // Block *blockTest = new Block(5, 15);
     // getTile(5, 15, &grid)->block = blockTest; // manually insert static block
     // Block *blockTest2 = new Block(5, 5);
@@ -120,7 +151,6 @@ void gameLoop(){
     getTile(5, 4, &grid)->block = blockTest;
     
     while(!quit){
-
         // event loop
         while(SDL_PollEvent(&event) != 0){
             switch(event.type){
@@ -128,14 +158,37 @@ void gameLoop(){
                     quit = true;
                     break;
                 case SDL_KEYDOWN:
-                    handleInput(event.key.keysym.sym, &testPiece);
+                    //handleInput(event.key.keysym.sym, &testPiece);
+                    keysPressed.push_back(event.key.keysym.sym);
                     break;
             }
+        }
+
+        // GAME STATE //
+        if(!keysPressed.empty()){
+            handleInput(keysPressed, &testPiece);
+            keysPressed.clear();
+        }
+        
+        if((pieceSpawnTime < SDL_GetTicks())){
+            printf("move down\n");
+            bool landed = !testPiece.move(DOWN);
+            if(landed){
+                printf("landed\n");
+                //testPiece = NULL;
+            }
+            pieceSpawnTime = SDL_GetTicks() + fallSpeed;
         }
 
         // RENDERING //
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+
+        SDL_RenderSetViewport(renderer, &windowViewport);
+        std::ostringstream oss;
+        oss << pieceSpawnTime;
+        info.changeText(oss.str().c_str());
+        info.render(0, 0);
 
         // Start rendering tetris grid, pieces, etc.
         SDL_RenderSetViewport(renderer, &gridViewport);

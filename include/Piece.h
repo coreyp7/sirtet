@@ -15,8 +15,10 @@ class Piece {
 
         std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid;
 
+        
+
         Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid);
-        void move(Direction dir);
+        bool move(Direction dir);
         void rotateCW();
         void rotateCCW();
         bool isEmpty(int x, int y);

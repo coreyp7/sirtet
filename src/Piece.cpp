@@ -12,7 +12,7 @@ Piece::Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     facing = UP;
 }
 
-void Piece::move(Direction dir){
+bool Piece::move(Direction dir){
     int xMove = 0;
     int yMove = 0;
 
@@ -34,8 +34,12 @@ void Piece::move(Direction dir){
     // Check if there's a collision where we're going to.
     Block *block = blocks;
     for(int i=0; i<4; i++){
+        if(!isEmptyAndInBounds(block->x + xMove, block->y + yMove)){
+            return false;
+        }
+
         if(getTile(block->x + xMove, block->y + yMove, grid)->block != NULL){
-            return;
+            return false;
         }
         block++;
     }
@@ -46,6 +50,7 @@ void Piece::move(Direction dir){
         block->y += yMove;
         block++;
     }
+    return true;
 }
 
 // Will return if the specified Tile position has a block in it.
