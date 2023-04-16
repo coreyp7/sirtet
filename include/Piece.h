@@ -8,7 +8,7 @@
 
 class Piece {
     public:
-        Block blocks[4]; //hardcoding rn to one type of piece
+        Block* blocks[4]; //hardcoding rn to one type of piece
         Direction facing;
         // int gridHeight = 20; // hardcoded for now
         // int gridWidth = 10; // hardcoded for now
@@ -23,6 +23,11 @@ class Piece {
         void rotateCCW();
         bool isEmpty(int x, int y);
         bool isEmptyAndInBounds(int x, int y);
+        // Call when Piece has landed and control is being removed from this piece.
+        // This just sets everything in this object to NULL, but leaves blocks
+        // in memory (because they are cleaned up via the grid in main).
+        void cleanupLanded();
 
+        int insertBlocksAtCurrPos();
         
 };

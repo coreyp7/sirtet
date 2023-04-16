@@ -134,10 +134,10 @@ void gameLoop(){
     Uint32 startOfFrame;
     Uint32 endOfFrame;
 
-    Piece testPiece = Piece{1, 1, &grid};
-
-    int fallSpeed = 500;
-    Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed;
+    int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
+    //Piece testPiece = Piece{1, 1, &grid};
+    Piece *currPiece = new Piece{1, 1, &grid};
+    Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
 
     std::vector<SDL_Keycode> keysPressed;
 
@@ -166,16 +166,22 @@ void gameLoop(){
 
         // GAME STATE //
         if(!keysPressed.empty()){
-            handleInput(keysPressed, &testPiece);
+            handleInput(keysPressed, currPiece);
             keysPressed.clear();
         }
         
         if((pieceSpawnTime < SDL_GetTicks())){
             printf("move down\n");
-            bool landed = !testPiece.move(DOWN);
+            bool landed = !currPiece->move(DOWN);
             if(landed){
                 printf("landed\n");
-                //testPiece = NULL;
+
+                // Insert blocks into position of Piece when landed,
+                // then get rid of that Piece.
+                currPiece->insertBlocksAtCurrPos();
+                currPiece->cleanupLanded();
+
+                currPiece = new Piece{1, 1, &grid};
             }
             pieceSpawnTime = SDL_GetTicks() + fallSpeed;
         }
@@ -226,8 +232,9 @@ void gameLoop(){
 
         // render piece
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        Block *block = testPiece.blocks;
+        Block *block;// = currPiece->blocks[0];
         for(int i=0; i<4; i++){
+            block = currPiece->blocks[i];
             SDL_Rect rect = {block->x * TILE_SIZE, block->y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
             if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
@@ -239,7 +246,7 @@ void gameLoop(){
             text->render(rect.x, rect.y);
             text->~Text();
 
-            block++;
+            // block = currPiece->blocks[i];
         }
 
         // SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
