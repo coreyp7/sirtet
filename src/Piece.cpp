@@ -3,11 +3,10 @@
 
 Piece::Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     // Dynamically allocated so that they stay in memory when on the grid.
-    blocks[0] = new Block{x, y};
-    blocks[1] = new Block{x, y-1};
-    blocks[2] = new Block{x+1, y};
-    blocks[3] = new Block{x+1, y+1};
-
+    blocks.push_back(new Block{x, y});
+    blocks.push_back(new Block{x, y-1});
+    blocks.push_back(new Block{x+1, y});
+    blocks.push_back(new Block{x+1, y+1});
     this->grid = grid;
 
     facing = UP;
