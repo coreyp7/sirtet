@@ -103,6 +103,28 @@ void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
     }
 }
 
+// Given a row number (starting from top), will return if a
+// row is completely empty of Blocks.
+bool isRowEmpty(int y){
+    for(int x=0; x<GRID_WIDTH; x++){
+        if(getTile(x, y, &grid)->block != NULL){
+            return false;
+        }
+    }
+    return true;
+}
+
+// Given a row number, will return if a row is completely
+// full of Blocks.
+bool isRowFull(int y){
+    for(int x=0; x<GRID_WIDTH; x++){
+        if(getTile(x, y, &grid)->block == NULL){
+            return false;
+        }
+    }
+    return true;
+}
+
 // Will check the grid for any complete lines and shift the block
 // positions appropriately.
 void clearCompleteLines(){
@@ -112,23 +134,36 @@ void clearCompleteLines(){
     std::vector<int> clearedRows;
     // Loop through array one row at a time
     for(int row=0; row<GRID_HEIGHT; row++){
-        full = true;
-        rowIndex = row * GRID_WIDTH; // start of this row
-
-        for(int tile=0; tile<GRID_WIDTH; tile++){
-            if(getTile(tile, row, &grid)->block == NULL){
-                full = false;
-                break;
+        if(isRowFull(row)){
+            clearedRows.push_back(row);
+            // now clear this row
+            for(int tile=0; tile<GRID_WIDTH; tile++){
+                delete getTile(tile, row, &grid)->block;
+                getTile(tile, row, &grid)->block = NULL;
             }
         }
+    }
 
-        if(full){
-                clearedRows.push_back(row);
-                // now clear this row
-                for(int tile=0; tile<GRID_WIDTH; tile++){
-                    delete getTile(tile, row, &grid)->block;
-                    getTile(tile, row, &grid)->block = NULL;
-                }
+    if(clearedRows.empty()){
+        return;
+    }
+
+    // Move shit down
+    int newRow = clearedRows.back();
+
+    for(int y=newRow; y>-1; y--){
+        //printf("Going through row %i\n", y);
+        if(isRowEmpty(y)){
+            // keep going up
+        } else {
+            // set the current row (y) to (newRow).
+            
+            for(int x=0; x<GRID_WIDTH; x++){
+                getTile(x, newRow, &grid)->block = getTile(x, y, &grid)->block;
+                getTile(x, y, &grid)->block = NULL;
+            }
+            printf("Row %i moved to row %i\n", y, newRow);
+            newRow--;
         }
     }
 }
@@ -168,9 +203,13 @@ void gameLoop(){
     // Block *blockTest2 = new Block(5, 5);
     // getTile(5, 5, &grid)->block = blockTest2; // manually insert static block
     Block *blockTest = new Block(5, 5);
-    getTile(5, 5, &grid)->block = blockTest;
-    blockTest = new Block(5, 4);
-    getTile(5, 4, &grid)->block = blockTest;
+    // getTile(5, 5, &grid)->block = blockTest;
+    // blockTest = new Block(5, 4);
+    // getTile(5, 4, &grid)->block = blockTest;
+
+    for(int i=0; i<GRID_WIDTH-1; i++){
+        getTile(i, 19, &grid)->block = blockTest;
+    }
     
     while(!quit){
         // event loop
@@ -193,10 +232,10 @@ void gameLoop(){
         }
         
         if((pieceSpawnTime < SDL_GetTicks())){
-            printf("move down\n");
+            //printf("move down\n");
             bool landed = !currPiece->move(DOWN);
             if(landed){
-                printf("landed\n");
+                //printf("landed\n");
 
                 // Insert blocks into position of Piece when landed,
                 // then get rid of that Piece.
