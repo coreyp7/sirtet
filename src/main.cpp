@@ -168,6 +168,16 @@ void clearCompleteLines(){
     }
 }
 
+Piece* getRandomPiece(){
+    int random = rand() % 2; // 0 or 1
+        switch(random){
+            case 0:
+                return new S_Piece(1, 1, &grid);
+            case 1:
+                return new T_Piece(1, 1, &grid);
+        }
+}
+
 
 void gameLoop(){
     bool quit = false;
@@ -193,9 +203,22 @@ void gameLoop(){
     int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
     //Piece testPiece = Piece{1, 1, &grid};
     //Piece *currPiece = new Piece{1, 1, &grid};
-    Piece *currPiece = new T_Piece{1, 1, &grid};
-    Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
+    //Piece *currPiece = new T_Piece{1, 1, &grid};
+    Piece** currPiece = new Piece*[4];
+    for(int i=0; i<4; i++){
+        // int random = rand() % 2; // 0 or 1
+        // switch(random){
+        //     case 0:
+        //         currPiece[i] = new S_Piece(1, 1, &grid);
+        //         break;
+        //     case 1:
+        //         currPiece[i] = new T_Piece(1, 1, &grid);
+        //         break;
+        // }
+        currPiece[i] = getRandomPiece();
+    }
 
+    Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
     std::vector<SDL_Keycode> keysPressed;
 
     // Block *blockTest = new Block(5, 15);
@@ -227,22 +250,26 @@ void gameLoop(){
 
         // GAME STATE //
         if(!keysPressed.empty()){
-            handleInput(keysPressed, currPiece);
+            handleInput(keysPressed, currPiece[0]);
             keysPressed.clear();
         }
         
         if((pieceSpawnTime < SDL_GetTicks())){
             //printf("move down\n");
-            bool landed = !currPiece->move(DOWN);
+            bool landed = !currPiece[0]->move(DOWN);
             if(landed){
                 //printf("landed\n");
 
                 // Insert blocks into position of Piece when landed,
                 // then get rid of that Piece.
-                currPiece->insertBlocksAtCurrPos();
-                currPiece->cleanupLanded();
+                currPiece[0]->insertBlocksAtCurrPos();
+                currPiece[0]->cleanupLanded();
 
-                currPiece = new T_Piece{1, 1, &grid};
+                // currPiece = new T_Piece{1, 1, &grid};
+                currPiece[0] = currPiece[1];
+                currPiece[1] = currPiece[2];
+                currPiece[2] = currPiece[3];
+                currPiece[3] = getRandomPiece();
 
                 // Check if grid has complete row, and clear it.
                 clearCompleteLines();
@@ -256,7 +283,7 @@ void gameLoop(){
 
         SDL_RenderSetViewport(renderer, &windowViewport);
         std::ostringstream oss;
-        oss << currPiece->facing;
+        oss << currPiece[0]->facing;
         info.changeText("Facing: "+oss.str());
         info.render(0, 0);
 
@@ -298,7 +325,7 @@ void gameLoop(){
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         Block *block;// = currPiece->blocks[0];
         for(int i=0; i<4; i++){
-            block = currPiece->blocks[i];
+            block = currPiece[0]->blocks[i];
             SDL_Rect rect = {block->x * TILE_SIZE, block->y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
             if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());

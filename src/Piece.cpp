@@ -80,6 +80,7 @@ void Piece::cleanupLanded(){
     }
 
     grid = NULL;
+    delete this;
 }
 
 // Will insert all the Blocks of this object into its current position.
