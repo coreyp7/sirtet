@@ -3,17 +3,17 @@
 T_Piece::T_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
 : Piece(){
     // Dynamically allocated so that they stay in memory when on the grid.
-    blocks.push_back(new Block{x, y});
-    blocks.push_back(new Block{x-1, y});
-    blocks.push_back(new Block{x, y-1});
-    blocks.push_back(new Block{x+1, y});
+    blocks[0] = (new Block{x, y});
+    blocks[1] = (new Block{x-1, y});
+    blocks[2] = (new Block{x, y-1});
+    blocks[3] = (new Block{x+1, y});
     this->grid = grid;
 
     facing = UP;
 }
 
 T_Piece::~T_Piece(){
-    for(int i=0; i<blocks.size(); i++){
+    for(int i=0; i<blocksSize; i++){
         blocks[i] = NULL;
     }
 

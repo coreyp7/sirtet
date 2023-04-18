@@ -3,10 +3,10 @@
 
 Piece::Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     // Dynamically allocated so that they stay in memory when on the grid.
-    blocks.push_back(new Block{x, y});
-    blocks.push_back(new Block{x, y-1});
-    blocks.push_back(new Block{x+1, y});
-    blocks.push_back(new Block{x+1, y+1});
+    blocks[0] = (new Block{x, y});
+    blocks[1] = (new Block{x, y-1});
+    blocks[2] = (new Block{x+1, y});
+    blocks[3] = (new Block{x+1, y+1});
     this->grid = grid;
 
     facing = UP;
@@ -37,7 +37,7 @@ bool Piece::move(Direction dir){
 
     // Check if there's a collision where we're going to.
     Block *block;// = blocks[0];
-    for(int i=0; i<blocks.size(); i++){
+    for(int i=0; i<blocksSize; i++){
         block = blocks[i];
         if(!isEmptyAndInBounds(block->x + xMove, block->y + yMove)){
             return false;
@@ -50,7 +50,7 @@ bool Piece::move(Direction dir){
     }
 
     //block = blocks[0];
-    for(int i=0; i<blocks.size(); i++){
+    for(int i=0; i<blocksSize; i++){
         block = blocks[i];
         block->x += xMove;
         block->y += yMove;
@@ -75,7 +75,7 @@ bool Piece::isEmptyAndInBounds(int x, int y){
 void Piece::cleanupLanded(){
     // empty array of references to objects, they're in the grid now
     // and will be cleaned up later.
-    for(int i=0; i<blocks.size(); i++){
+    for(int i=0; i<blocksSize; i++){
         blocks[i] = NULL;
     }
 
@@ -86,7 +86,7 @@ void Piece::cleanupLanded(){
 // Will insert all the Blocks of this object into its current position.
 // Should only be called when a Piece has landed and you're going to get rid of it.
 int Piece::insertBlocksAtCurrPos(){
-    for(int i=0; i<blocks.size(); i++){
+    for(int i=0; i<blocksSize; i++){
         getTile(blocks[i]->x, blocks[i]->y, grid)->block = blocks[i];
     }
 }

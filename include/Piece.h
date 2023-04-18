@@ -9,12 +9,10 @@
 
 class Piece {
     public:
-        //Block* blocks[4]; //hardcoding rn to one type of piece
         Direction facing;
-        // int gridHeight = 20; // hardcoded for now
-        // int gridWidth = 10; // hardcoded for now
 
-        std::vector<Block *> blocks;
+        Block *blocks[4]; // the blocks that makeup this Piece (always 4)
+        int blocksSize = 4; // just keeping this just in case I wanna add weird blocks or sum
         std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid;
 
         
