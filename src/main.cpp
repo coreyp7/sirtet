@@ -42,6 +42,9 @@ const SDL_Color SDL_COLOR_GREEN = {0, 255, 0, 255};
 
 
 std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
+std::queue<Piece*> pieceQueue;
+Piece* currentPiece;
+Piece* heldPiece;
 
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
@@ -79,6 +82,20 @@ void handleInput(SDL_Keycode key, Piece *piece){
     }
 }
 
+// Provided a reference to the Piece, this will store this Piece in the
+// player's Piece holder.
+// If the player already had a Piece in there (anytime after first), then
+// the piece that was in the slot will be spawned, ignoring pieceQueue.
+void holdPiece(Piece* piece){
+    if(heldPiece != NULL){
+        std::swap(currentPiece, heldPiece);
+    } else {  // first time holding Piece
+        heldPiece = currentPiece;
+
+        currentPiece = pieceQueue.front();
+    }
+}
+
 void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
     for(int i=0; i<keysPressed.size(); i++){
         switch(keysPressed.at(i)){
@@ -100,6 +117,8 @@ void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
             case SDLK_o:
                 piece->rotateCCW();
                 break;
+            case SDLK_h:
+                holdPiece(piece);
     }
     }
 }
@@ -203,11 +222,10 @@ void gameLoop(){
 
     int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
     
-    std::queue<Piece*> pieceQueue;
     for(int i=0; i<4; i++){
         pieceQueue.push(getRandomPiece());
     }
-    Piece* currentPiece = pieceQueue.front();
+    currentPiece = pieceQueue.front();
 
     Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
     std::vector<SDL_Keycode> keysPressed;
@@ -252,7 +270,11 @@ void gameLoop(){
                 // then get rid of that Piece in the queue.
                 currentPiece->insertBlocksAtCurrPos();
                 pieceQueue.pop();
-                
+
+                // delete current piece from memory
+                currentPiece->cleanupLanded();
+                delete currentPiece;
+
                 pieceQueue.push(getRandomPiece());
                 currentPiece = pieceQueue.front();
 
