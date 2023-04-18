@@ -8,4 +8,5 @@ class T_Piece : public Piece {
 
         void rotateCW();
         void rotateCCW();
+        void setPosition(int x, int y);
 };

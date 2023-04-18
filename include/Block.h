@@ -6,4 +6,5 @@ class Block {
 
         Block();
         Block(int x, int y);
+        void setPosition(int x, int y);
 };

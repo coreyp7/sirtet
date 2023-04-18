@@ -131,3 +131,9 @@ void T_Piece::rotateCCW(){
         }
 }
 
+void T_Piece::setPosition(int x, int y){
+    blocks[0]->setPosition(x, y);
+    blocks[1]->setPosition(x-1, y);
+    blocks[2]->setPosition(x, y-1);
+    blocks[3]->setPosition(x+1, y);
+}

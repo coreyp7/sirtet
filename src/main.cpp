@@ -46,6 +46,8 @@ std::queue<Piece*> pieceQueue;
 Piece* currentPiece;
 Piece* heldPiece;
 
+Piece* getRandomPiece();
+
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
 
@@ -89,12 +91,19 @@ void handleInput(SDL_Keycode key, Piece *piece){
 void holdPiece(Piece* piece){
     if(heldPiece != NULL){
         std::swap(currentPiece, heldPiece);
+        heldPiece->setPosition(1, 1);
     } else {  // first time holding Piece
+        
+        printf("Before: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
         heldPiece = currentPiece;
-
+        pieceQueue.pop();
+        pieceQueue.push(getRandomPiece());
         currentPiece = pieceQueue.front();
+        heldPiece->setPosition(1, 1);
+        printf("After: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
     }
 }
+
 
 void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
     for(int i=0; i<keysPressed.size(); i++){
