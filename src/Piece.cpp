@@ -16,6 +16,12 @@ Piece::Piece(){
     // for when you create a Piece from a subclass and don't need anything done for you here.
 }
 
+Piece::~Piece(){
+    // Destructor doesn't destroy everything because the blocks
+    // are handled by the grid after the lifespan of this object.
+    cleanupLanded();
+}
+
 bool Piece::move(Direction dir){
     int xMove = 0;
     int yMove = 0;

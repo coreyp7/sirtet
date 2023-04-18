@@ -18,6 +18,7 @@ class Piece {
         
         Piece();
         Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid);
+        ~Piece();
         bool move(Direction dir);
         virtual void rotateCW() = 0;
         virtual void rotateCCW() = 0;
