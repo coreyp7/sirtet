@@ -16,11 +16,13 @@
 #include "include/Piece.h"
 #include "include/S_Piece.h"
 #include "include/T_Piece.h"
+#include "include/Z_Piece.h"
 #include "include/Tile.h"
 
 
 int init();
 void cleanup();
+Piece* getRandomPiece();
 
 // enum Direction {
 //     UP, DOWN, LEFT, RIGHT
@@ -28,11 +30,9 @@ void cleanup();
 
 const int WINDOW_WIDTH = 1080;
 const int WINDOW_HEIGHT = 720;
-
-// const int GRID_WIDTH = 10;
-// const int GRID_HEIGHT = 20;
-
 const int TILE_SIZE = 25;
+const int PIECE_START_POS_X = (GRID_WIDTH/2)-1;
+const int PIECE_START_POS_Y = 1;
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -40,47 +40,18 @@ TTF_Font* globalFont;
 const SDL_Color SDL_COLOR_WHITE = {255, 255, 255, 255};
 const SDL_Color SDL_COLOR_GREEN = {0, 255, 0, 255};
 
-
 std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
 std::queue<Piece*> pieceQueue;
 Piece* currentPiece;
 Piece* heldPiece;
 
-Piece* getRandomPiece();
-
+// Populates the grid array with every Tile in our grid.
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
-
         for(int column=0; column<GRID_WIDTH; column++){
-
             int rowStart = row * GRID_WIDTH; // first tile pos in this row
-            // grid[rowStart + column] = SDL_Rect{column*TILE_SIZE, row*TILE_SIZE, TILE_SIZE, TILE_SIZE};
             grid[rowStart + column] = Tile{column, row, NULL};
         }
-    }
-    //printf("(%i, %i)", grid[(GRID_WIDTH * GRID_HEIGHT)-1].x, grid[(GRID_WIDTH * GRID_HEIGHT)-1].y);
-}
-
-void handleInput(SDL_Keycode key, Piece *piece){
-    switch(key){
-        case SDLK_w:
-            piece->move(UP);
-            break;
-        case SDLK_a:
-            piece->move(LEFT);
-            break;
-        case SDLK_s:
-            piece->move(DOWN);
-            break;
-        case SDLK_d:
-            piece->move(RIGHT);
-            break;
-        case SDLK_p:
-            piece->rotateCW();
-            break;
-        case SDLK_o:
-            piece->rotateCCW();
-            break;
     }
 }
 
@@ -89,19 +60,18 @@ void handleInput(SDL_Keycode key, Piece *piece){
 // If the player already had a Piece in there (anytime after first), then
 // the piece that was in the slot will be spawned, ignoring pieceQueue.
 void holdPiece(Piece* piece){
+    printf("Before: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
     if(heldPiece != NULL){
         std::swap(currentPiece, heldPiece);
         heldPiece->setPosition(1, 1);
     } else {  // first time holding Piece
-        
-        printf("Before: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
         heldPiece = currentPiece;
         pieceQueue.pop();
         pieceQueue.push(getRandomPiece());
         currentPiece = pieceQueue.front();
         heldPiece->setPosition(1, 1);
-        printf("After: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
     }
+    printf("After: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
 }
 
 
@@ -198,13 +168,18 @@ void clearCompleteLines(){
 }
 
 Piece* getRandomPiece(){
-    int random = rand() % 2; // 0 or 1
+    int random = rand() % 3;
         switch(random){
             case 0:
-                return new S_Piece(1, 1, &grid);
+                return new S_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
             case 1:
-                return new T_Piece(1, 1, &grid);
+                return new T_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+            case 2:
+                return new Z_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
         }
+
+    // FOR TESTING PIECES
+    //return new Z_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
 }
 
 
@@ -297,11 +272,11 @@ void gameLoop(){
         SDL_RenderClear(renderer);
 
         // NOTE: Will probably render stuff outside grid here.
-        // SDL_RenderSetViewport(renderer, &windowViewport);
-        // std::ostringstream oss;
-        // oss << currPiece[0]->facing;
-        // info.changeText("Facing: "+oss.str());
-        // info.render(0, 0);
+        SDL_RenderSetViewport(renderer, &windowViewport);
+        std::ostringstream oss;
+        oss << currentPiece->facing;
+        info.changeText("Facing: "+oss.str());
+        info.render(0, 0);
 
         // Start rendering tetris grid, pieces, etc.
         SDL_RenderSetViewport(renderer, &gridViewport);
