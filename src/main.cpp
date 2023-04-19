@@ -20,6 +20,7 @@
 #include "include/L_Piece.h"
 #include "include/J_Piece.h"
 #include "include/O_Piece.h"
+#include "include/I_Piece.h"
 #include "include/Tile.h"
 
 
@@ -172,7 +173,8 @@ void clearCompleteLines(){
 
 Piece* getRandomPiece(){
     
-    int random = rand() % 6;
+    /*
+    int random = rand() % 7;
         switch(random){
             case 0:
                 return new S_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
@@ -186,9 +188,12 @@ Piece* getRandomPiece(){
                 return new L_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
             case 5:
                 return new O_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+            case 6:
+                return new I_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
         }
-
+    */
     // FOR TESTING PIECES
+    return new I_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
     //return new O_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
 }
 
