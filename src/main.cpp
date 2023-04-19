@@ -172,8 +172,6 @@ void clearCompleteLines(){
 }
 
 Piece* getRandomPiece(){
-    
-    /*
     int random = rand() % 7;
         switch(random){
             case 0:
@@ -191,10 +189,8 @@ Piece* getRandomPiece(){
             case 6:
                 return new I_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
         }
-    */
     // FOR TESTING PIECES
-    return new I_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
-    //return new O_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+    //return new I_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
 }
 
 

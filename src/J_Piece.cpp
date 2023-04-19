@@ -175,5 +175,6 @@ void J_Piece::setPosition(int x, int y){
     blocks[1]->setPosition(x, y-1);
     blocks[2]->setPosition(x+1, y-1);
     blocks[3]->setPosition(x, y+1);
+    facing = UP;
 }
 
