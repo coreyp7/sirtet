@@ -19,6 +19,7 @@
 #include "include/Z_Piece.h"
 #include "include/L_Piece.h"
 #include "include/J_Piece.h"
+#include "include/O_Piece.h"
 #include "include/Tile.h"
 
 
@@ -65,13 +66,13 @@ void holdPiece(Piece* piece){
     printf("Before: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
     if(heldPiece != NULL){
         std::swap(currentPiece, heldPiece);
-        heldPiece->setPosition(1, 1);
+        heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
     } else {  // first time holding Piece
         heldPiece = currentPiece;
         pieceQueue.pop();
         pieceQueue.push(getRandomPiece());
         currentPiece = pieceQueue.front();
-        heldPiece->setPosition(1, 1);
+        heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
     }
     printf("After: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
 }
@@ -170,7 +171,8 @@ void clearCompleteLines(){
 }
 
 Piece* getRandomPiece(){
-    int random = rand() % 5;
+    
+    int random = rand() % 6;
         switch(random){
             case 0:
                 return new S_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
@@ -182,10 +184,12 @@ Piece* getRandomPiece(){
                 return new J_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
             case 4:
                 return new L_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+            case 5:
+                return new O_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
         }
 
     // FOR TESTING PIECES
-    // return new J_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+    //return new O_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
 }
 
 
