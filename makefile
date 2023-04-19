@@ -3,7 +3,7 @@ FILENAME = main
 #OBJS specifies which files to compile as part of the project
 OBJS = src\main.cpp src\Tile.cpp src\Block.cpp src\Text.cpp src\util.cpp
 
-PIECE_FILE_LIST = src\Piece.cpp src\S_Piece.cpp src\T_Piece.cpp src/Z_Piece.cpp src/L_Piece.cpp
+PIECE_FILE_LIST = src\Piece.cpp src\S_Piece.cpp src\T_Piece.cpp src/Z_Piece.cpp src/L_Piece.cpp src/J_Piece.cpp
 #CC specifies which compiler we're using
 CC = g++
 

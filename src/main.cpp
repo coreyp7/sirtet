@@ -18,6 +18,7 @@
 #include "include/T_Piece.h"
 #include "include/Z_Piece.h"
 #include "include/L_Piece.h"
+#include "include/J_Piece.h"
 #include "include/Tile.h"
 
 
@@ -169,18 +170,22 @@ void clearCompleteLines(){
 }
 
 Piece* getRandomPiece(){
-    // int random = rand() % 3;
-    //     switch(random){
-    //         case 0:
-    //             return new S_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
-    //         case 1:
-    //             return new T_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
-    //         case 2:
-    //             return new Z_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
-    //     }
+    int random = rand() % 5;
+        switch(random){
+            case 0:
+                return new S_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+            case 1:
+                return new T_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+            case 2:
+                return new Z_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+            case 3:
+                return new J_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+            case 4:
+                return new L_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+        }
 
     // FOR TESTING PIECES
-    return new L_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
+    // return new J_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
 }
 
 
