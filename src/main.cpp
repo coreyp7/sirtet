@@ -57,6 +57,8 @@ Uint32 pieceSpawnTime; //SDL_GetTicks() + fallSpeed; // used for dropping piece
 //bool allowedToDrop = true;
 Uint32 allowedToDrop;
 
+SDL_Texture* blockTexture;
+
 // Populates the grid array with every Tile in our grid.
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
@@ -327,18 +329,24 @@ void gameLoop(){
         SDL_RenderSetViewport(renderer, &gridViewport);
 
         // render grid
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
         for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
             SDL_Rect rect = {grid[i].x * TILE_SIZE, grid[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-
-            if(grid[i].block != NULL){
-                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-            }
 
             if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
             }
 
+            if(grid[i].block != NULL){
+                SDL_RenderCopyEx(renderer, blockTexture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+            }
+            /*
+            if(grid[i].block != NULL){
+                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            }
+            */
+
+            /*
             if(grid[i].block != NULL){
                 SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
@@ -349,20 +357,17 @@ void gameLoop(){
                 text->render(rect.x, rect.y);
                 text->~Text();
             }
-
-            // Text text = Text(renderer, globalFont, SDL_COLOR_WHITE);
-            // std::ostringstream oss;
-            // oss << i;
-            // text.changeText(oss.str());
-            // text.render(rect.x, rect.y);
+                */
         }
 
         // render piece
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        //SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         Block *block;// = currPiece->blocks[0];
         for(int i=0; i<4; i++){
             block = currentPiece->blocks[i];
             SDL_Rect rect = {block->x * TILE_SIZE, block->y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+            SDL_RenderCopyEx(renderer, blockTexture, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
+            /*
             if(SDL_RenderDrawRect(renderer, &rect)<0){
                 printf("SDL_Error:%s\n", SDL_GetError());
             }
@@ -372,10 +377,9 @@ void gameLoop(){
             text->changeText(oss.str());
             text->render(rect.x, rect.y);
             text->~Text();
-
+            */
             // block = currPiece->blocks[i];
         }
-
 
         // SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         //renderPiece(&piece);
@@ -420,6 +424,12 @@ int init(){
 		printf( "Renderer couldn't be created, SDL Error: %s\n", SDL_GetError() );
         return -3;
     }
+
+    int imgFlags = IMG_INIT_PNG;
+    if( IMG_Init(imgFlags) == -1){
+        printf("SDL_IMG couldn't be initialized: %s\n", IMG_GetError());
+        return -6;
+    }
     
     if( TTF_Init() == -1){
         printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -431,6 +441,12 @@ int init(){
     if(globalFont == NULL){
 		printf( "Failed to load lato black: %s\n", TTF_GetError() );
         return -7;
+    }
+ 
+    blockTexture = IMG_LoadTexture(renderer, "assets/blocks/L.png");
+    if(blockTexture == NULL){
+        printf("Couldn't load box texture.\n %s\n", IMG_GetError());
+        return -8;
     }
 
     // TODO: later I'll init SDL_img and all the other stuff too.
