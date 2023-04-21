@@ -49,6 +49,10 @@ std::queue<Piece*> pieceQueue;
 Piece* currentPiece;
 Piece* heldPiece;
 
+bool landed = false;
+
+Uint32 pieceSpawnTime; //SDL_GetTicks() + fallSpeed; // used for dropping piece
+
 // Populates the grid array with every Tile in our grid.
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
@@ -85,7 +89,8 @@ void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
         switch(keysPressed.at(i)){
             case SDLK_w:
                 piece->landInstant();
-                
+                landed = true;
+                pieceSpawnTime = SDL_GetTicks() - 1;                
                 break;
             case SDLK_a:
                 piece->move(LEFT);
@@ -224,17 +229,10 @@ void gameLoop(){
     }
     currentPiece = pieceQueue.front();
 
-    Uint32 pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
+    pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
     std::vector<SDL_Keycode> keysPressed;
 
-    // Block *blockTest = new Block(5, 15);
-    // getTile(5, 15, &grid)->block = blockTest; // manually insert static block
-    // Block *blockTest2 = new Block(5, 5);
-    // getTile(5, 5, &grid)->block = blockTest2; // manually insert static block
     Block *blockTest = new Block(5, 5);
-    // getTile(5, 5, &grid)->block = blockTest;
-    // blockTest = new Block(5, 4);
-    // getTile(5, 4, &grid)->block = blockTest;
 
     for(int i=0; i<GRID_WIDTH-1; i++){
         getTile(i, 19, &grid)->block = blockTest;
@@ -259,8 +257,9 @@ void gameLoop(){
             keysPressed.clear();
         }
         
+        
         if((pieceSpawnTime < SDL_GetTicks())){
-            bool landed = !currentPiece->move(DOWN);
+            landed = !currentPiece->move(DOWN);
             if(landed){
                 // Insert blocks into position of Piece when landed,
                 // then get rid of that Piece in the queue.
