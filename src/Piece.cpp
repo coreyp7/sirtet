@@ -145,6 +145,8 @@ void Piece::landInstant(){
         baseOffsets[i] = pieceBase - blocks[i]->y;
     }
 
+    printf("Cowabunga\n");
+
     // Go through each row (top to bottom) until we find a tile with block in it
     for(int y=pieceBase; y<GRID_HEIGHT; y++){
         for(int blockIndex=0; blockIndex<blocksSize; blockIndex++){
@@ -157,7 +159,7 @@ void Piece::landInstant(){
                     getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
                     // note: somehow have to mark that we've 'landed'
                 }
-                printf("Placed this Piece on the ground; returning out of landInstant");
+                printf("Placed this Piece on the ground; returning out of landInstant\n");
                 return;
             }
         }

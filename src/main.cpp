@@ -52,6 +52,8 @@ Piece* heldPiece;
 bool landed = false;
 
 Uint32 pieceSpawnTime; //SDL_GetTicks() + fallSpeed; // used for dropping piece
+//bool allowedToDrop = true;
+Uint32 allowedToDrop;
 
 // Populates the grid array with every Tile in our grid.
 void fillGrid(){
@@ -88,9 +90,12 @@ void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
     for(int i=0; i<keysPressed.size(); i++){
         switch(keysPressed.at(i)){
             case SDLK_w:
-                piece->landInstant();
-                landed = true;
-                pieceSpawnTime = SDL_GetTicks() - 1;                
+                if(allowedToDrop < SDL_GetTicks()){
+                    piece->landInstant();
+                    landed = true;
+                    pieceSpawnTime = SDL_GetTicks() - 1;                
+                    allowedToDrop = SDL_GetTicks() + 250;
+                } // otherwise ignore
                 break;
             case SDLK_a:
                 piece->move(LEFT);
@@ -230,9 +235,11 @@ void gameLoop(){
     currentPiece = pieceQueue.front();
 
     pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
+    allowedToDrop = 0;
     std::vector<SDL_Keycode> keysPressed;
 
     Block *blockTest = new Block(5, 5);
+    
 
     for(int i=0; i<GRID_WIDTH-1; i++){
         getTile(i, 19, &grid)->block = blockTest;
