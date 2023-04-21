@@ -17,3 +17,8 @@ const int GRID_HEIGHT = 20;
 // (Top left going down)
 // Returns NULL if the requested grid position is invalid.
 Tile* getTile(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid);
+
+typedef struct {
+    int x;
+    int y;
+} Pair;

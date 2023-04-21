@@ -1,5 +1,6 @@
 #include "include/util.h"
 
+
 // Get pointer to rect at position specified.
 // (Top left going down)
 // Returns NULL if the requested grid position is invalid.
@@ -11,6 +12,7 @@ Tile* getTile(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
     int rowStart = y * GRID_WIDTH;
     return &grid->at(rowStart + x);
 }
+
 
 // int init(SDL_Window* window, SDL_Renderer *renderer, int windowWidth, int windowHeight){
 //     if(SDL_Init(SDL_INIT_VIDEO) < 0){

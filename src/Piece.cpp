@@ -124,6 +124,48 @@ void Piece::landInstant(){
     // when it instantly lands. 
     //
     // Additional logic may have to be added to main.cpp to set 'landed' to true instantly.
+
+    // OK new information:
+    // I need to be checking the x & y of the blocks with the row that THEY'RE on. 
+    // We need to cover situations where there is a collision on on block but not the other (L Piece).
+    
+
+    // So, for each block, we need an offset so that we know what row its in while it is moving down.
+    Pair originalPositions[4] = { Pair{blocks[0]->x, blocks[0]->y}, Pair{blocks[1]->x, blocks[1]->y}, Pair{blocks[2]->x, blocks[2]->y}, Pair{blocks[3]->x, blocks[3]->y}, };
+    // we have the original positions so we can figure out how much to offset their y
+    int pieceBase = -1;
+    for(int i=0; i<blocksSize; i++){
+        if(blocks[i]->y > pieceBase){
+            pieceBase = blocks[i]->y;
+        } 
+    }
+    int baseOffsets[4];
+    // now get offset for each block 
+    for(int i=0; i<blocksSize; i++){
+        baseOffsets[i] = pieceBase - blocks[i]->y;
+    }
+
+    // now we have the y offset for each block.
+    
+    for(int y=pieceBottom; y<GRID_HEIGHT; y++){
+        for(int blockIndex=0; blockIndex<blocksSize; blockIndex++){
+            //TODO: handle if getTile returns NULL because that means we're on the ground.
+
+            if(getTile(blocks[blockIndex]->x, y-baseOffsets[blockIndex], grid)->block != NULL){
+                printf("This piece's base will be placed on row %i\n", y-1);
+                return;
+            }
+            /*
+            if(getTile(blocks[blockIndex]->x, y, grid)->block != NULL){
+                // There's a block here, so stop moving down and place the Piece above this row.
+                printf("This piece's base will be placed on row %i\n", y-1);
+                return;
+            }
+            */
+        }
+    }
+    printf("Nothing was found?\n");
+    /*
     for(int y=pieceBottom; y<GRID_HEIGHT; y++){
         for(int i=0; i<blocksSize; i++){
             if(getTile(blocks[i]->x, y, grid)->block != NULL){
@@ -142,4 +184,5 @@ void Piece::landInstant(){
             }
         }
    } 
+   */
 }
