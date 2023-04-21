@@ -49,6 +49,7 @@ std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
 std::queue<Piece*> pieceQueue;
 Piece* currentPiece;
 Piece* heldPiece;
+bool heldPieceLocked = false;
 
 bool landed = false;
 
@@ -71,6 +72,9 @@ void fillGrid(){
 // If the player already had a Piece in there (anytime after first), then
 // the piece that was in the slot will be spawned, ignoring pieceQueue.
 void holdPiece(Piece* piece){
+    // if locked, then return and ignore.
+    if(heldPieceLocked) return;
+
     printf("Before: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
     if(heldPiece != NULL){
         std::swap(currentPiece, heldPiece);
@@ -82,6 +86,7 @@ void holdPiece(Piece* piece){
         currentPiece = pieceQueue.front();
         heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
     }
+    heldPieceLocked = true;
     printf("After: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
 }
 
@@ -293,6 +298,7 @@ void gameLoop(){
 
                     pieceQueue.push(getRandomPiece());
                     currentPiece = pieceQueue.front();
+                    heldPieceLocked = false;
 
                     clearCompleteLines();
 
