@@ -100,38 +100,6 @@ int Piece::insertBlocksAtCurrPos(){
 // Drop the Piece in this x position on the first block it finds in the y.
 void Piece::landInstant(){
     printf("landInstant()\n");
-    //Y NEEDS TO BE CHANGED TO BE THE BOTTOM OF THIS PIECE (Y BOTTOM)
-    /*
-    int pieceBottom = -1;
-    for(int i=0; i<blocksSize; i++){
-        if(blocks[i]->y > pieceBottom){
-            pieceBottom = blocks[i]->y;
-        }
-    }
-    */
-    // Okay I think I have to go to work now:
-    // This logic for the outer loop is valid, but the loops inside it are producing crazy shit.
-    // Use the outer loop and check that its only iterating through rows that are below the Piece.
-    //
-    // Then, iterate through this Piece's blocks and see if there's a block in its spot in the current row.
-    //
-    // If there is, then move all of the pieces down the same amount.
-    // NOTE: it may be useful to calculate the distance from the 'bottom' of the Piece a block is.
-    // So, if it IS the bottom of the Piece, then the distance would be 0.
-    // But if say, you're the top block of a L piece, then the distance would be 2.
-    // This way we can offset the destination of the block, therefore keeping the shape of the Piece in tact
-    // when it instantly lands. 
-    //
-    // Additional logic may have to be added to main.cpp to set 'landed' to true instantly.
-
-    // OK new information:
-    // I need to be checking the x & y of the blocks with the row that THEY'RE on. 
-    // We need to cover situations where there is a collision on on block but not the other (L Piece).
-    
-
-    // So, for each block, we need an offset so that we know what row its in while it is moving down.
-    //Pair originalPositions[4] = { Pair{blocks[0]->x, blocks[0]->y}, Pair{blocks[1]->x, blocks[1]->y}, Pair{blocks[2]->x, blocks[2]->y}, Pair{blocks[3]->x, blocks[3]->y}, };
-    // we have the original positions so we can figure out how much to offset their y
 
     int pieceBase = -1;
     for(int i=0; i<blocksSize; i++){

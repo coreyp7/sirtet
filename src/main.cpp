@@ -43,6 +43,7 @@ SDL_Renderer *renderer;
 TTF_Font* globalFont;
 const SDL_Color SDL_COLOR_WHITE = {255, 255, 255, 255};
 const SDL_Color SDL_COLOR_GREEN = {0, 255, 0, 255};
+bool gameOver = false;
 
 std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
 std::queue<Piece*> pieceQueue;
@@ -205,6 +206,18 @@ Piece* getRandomPiece(){
     //return new I_Piece(PIECE_START_POS_X, PIECE_START_POS_Y, &grid);
 }
 
+// Returns true if game over, false otherwise.
+bool checkForGameOver(){
+    for(int i=0; i<4; i++){
+        int x = currentPiece->blocks[i]->x;
+        int y = currentPiece->blocks[i]->y;
+        if(getTile(x, y, &grid)->block != NULL){
+            // there's a block present in the spawn position, the game is over.
+            return true;
+        }
+    }
+    return false;
+}
 
 void gameLoop(){
     bool quit = false;
@@ -258,31 +271,38 @@ void gameLoop(){
             }
         }
 
-        // GAME STATE //
-        if(!keysPressed.empty()){
-            handleInput(keysPressed, currentPiece);
-            keysPressed.clear();
-        }
-        
-        
-        if((pieceSpawnTime < SDL_GetTicks())){
-            landed = !currentPiece->move(DOWN);
-            if(landed){
-                // Insert blocks into position of Piece when landed,
-                // then get rid of that Piece in the queue.
-                currentPiece->insertBlocksAtCurrPos();
-                pieceQueue.pop();
-
-                // delete current piece from memory
-                currentPiece->cleanupLanded();
-                delete currentPiece;
-
-                pieceQueue.push(getRandomPiece());
-                currentPiece = pieceQueue.front();
-
-                clearCompleteLines();
+        if(!gameOver){
+            // GAME STATE //
+            if(!keysPressed.empty()){
+                handleInput(keysPressed, currentPiece);
+                keysPressed.clear();
             }
-            pieceSpawnTime = SDL_GetTicks() + fallSpeed;
+            
+            
+            if((pieceSpawnTime < SDL_GetTicks())){
+                landed = !currentPiece->move(DOWN);
+                if(landed){
+                    // Insert blocks into position of Piece when landed,
+                    // then get rid of that Piece in the queue.
+                    currentPiece->insertBlocksAtCurrPos();
+                    pieceQueue.pop();
+
+                    // delete current piece from memory
+                    currentPiece->cleanupLanded();
+                    delete currentPiece;
+
+                    pieceQueue.push(getRandomPiece());
+                    currentPiece = pieceQueue.front();
+
+                    clearCompleteLines();
+
+                    if(checkForGameOver()){
+                        // do game over shit
+                        gameOver = true;
+                    }
+                }
+                pieceSpawnTime = SDL_GetTicks() + fallSpeed;
+        }
         }
 
         // RENDERING //
@@ -291,10 +311,11 @@ void gameLoop(){
 
         // NOTE: Will probably render stuff outside grid here.
         SDL_RenderSetViewport(renderer, &windowViewport);
-        std::ostringstream oss;
-        oss << currentPiece->facing;
-        info.changeText("Facing: "+oss.str());
-        info.render(0, 0);
+        if(gameOver){
+            std::ostringstream oss;
+            info.changeText("GAME OVER");
+            info.render((WINDOW_WIDTH-info.getWidth())/2, 0);
+        }
 
         // Start rendering tetris grid, pieces, etc.
         SDL_RenderSetViewport(renderer, &gridViewport);
