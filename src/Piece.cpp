@@ -104,12 +104,14 @@ int Piece::insertBlocksAtCurrPos(){
 void Piece::landInstant(){
     printf("landInstant()\n");
     //Y NEEDS TO BE CHANGED TO BE THE BOTTOM OF THIS PIECE (Y BOTTOM)
+    /*
     int pieceBottom = -1;
     for(int i=0; i<blocksSize; i++){
         if(blocks[i]->y > pieceBottom){
             pieceBottom = blocks[i]->y;
         }
     }
+    */
     // Okay I think I have to go to work now:
     // This logic for the outer loop is valid, but the loops inside it are producing crazy shit.
     // Use the outer loop and check that its only iterating through rows that are below the Piece.
@@ -147,12 +149,24 @@ void Piece::landInstant(){
 
     // now we have the y offset for each block.
     
-    for(int y=pieceBottom; y<GRID_HEIGHT; y++){
+    for(int y=pieceBase; y<GRID_HEIGHT; y++){
         for(int blockIndex=0; blockIndex<blocksSize; blockIndex++){
             //TODO: handle if getTile returns NULL because that means we're on the ground.
 
             if(getTile(blocks[blockIndex]->x, y-baseOffsets[blockIndex], grid)->block != NULL){
+                /*
                 printf("This piece's base will be placed on row %i\n", y-1);
+                return;
+                */
+               // The row above is where our Piece is going.
+                int rowDest = y - 1;
+                for(int i=0; i<blocksSize; i++){
+                    // move the blocks to their new Tiles
+                    blocks[i]->setPosition(blocks[i]->x, rowDest-baseOffsets[i]);
+                    getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
+                    // note: somehow have to mark that we've 'landed'.
+                }
+                printf("Placed this Piece on the ground; returning out of landInstant");
                 return;
             }
             /*
