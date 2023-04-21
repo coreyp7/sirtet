@@ -96,11 +96,8 @@ int Piece::insertBlocksAtCurrPos(){
     }
 }
 
-// For row in grid
-//  for block in blocks
-//   if getTile(block.x, row y) != null
-//    place this piece's blocks on the row above this row (row-1)
-//      return
+// Will place the Piece on the grid immediately.
+// Drop the Piece in this x position on the first block it finds in the y.
 void Piece::landInstant(){
     printf("landInstant()\n");
     //Y NEEDS TO BE CHANGED TO BE THE BOTTOM OF THIS PIECE (Y BOTTOM)
@@ -133,70 +130,47 @@ void Piece::landInstant(){
     
 
     // So, for each block, we need an offset so that we know what row its in while it is moving down.
-    Pair originalPositions[4] = { Pair{blocks[0]->x, blocks[0]->y}, Pair{blocks[1]->x, blocks[1]->y}, Pair{blocks[2]->x, blocks[2]->y}, Pair{blocks[3]->x, blocks[3]->y}, };
+    //Pair originalPositions[4] = { Pair{blocks[0]->x, blocks[0]->y}, Pair{blocks[1]->x, blocks[1]->y}, Pair{blocks[2]->x, blocks[2]->y}, Pair{blocks[3]->x, blocks[3]->y}, };
     // we have the original positions so we can figure out how much to offset their y
+
     int pieceBase = -1;
     for(int i=0; i<blocksSize; i++){
         if(blocks[i]->y > pieceBase){
             pieceBase = blocks[i]->y;
         } 
     }
+    // Contains offset of block from the Piece's 'base'.
     int baseOffsets[4];
-    // now get offset for each block 
     for(int i=0; i<blocksSize; i++){
         baseOffsets[i] = pieceBase - blocks[i]->y;
     }
 
-    // now we have the y offset for each block.
-    
+    // Go through each row (top to bottom) until we find a tile with block in it
     for(int y=pieceBase; y<GRID_HEIGHT; y++){
         for(int blockIndex=0; blockIndex<blocksSize; blockIndex++){
-            //TODO: handle if getTile returns NULL because that means we're on the ground.
-
             if(getTile(blocks[blockIndex]->x, y-baseOffsets[blockIndex], grid)->block != NULL){
-                /*
-                printf("This piece's base will be placed on row %i\n", y-1);
-                return;
-                */
-               // The row above is where our Piece is going.
+               // rowDes is the row where our Piece base is going.
                 int rowDest = y - 1;
                 for(int i=0; i<blocksSize; i++){
                     // move the blocks to their new Tiles
                     blocks[i]->setPosition(blocks[i]->x, rowDest-baseOffsets[i]);
                     getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
-                    // note: somehow have to mark that we've 'landed'.
+                    // note: somehow have to mark that we've 'landed'
                 }
                 printf("Placed this Piece on the ground; returning out of landInstant");
                 return;
             }
-            /*
-            if(getTile(blocks[blockIndex]->x, y, grid)->block != NULL){
-                // There's a block here, so stop moving down and place the Piece above this row.
-                printf("This piece's base will be placed on row %i\n", y-1);
-                return;
-            }
-            */
         }
     }
-    printf("Nothing was found?\n");
-    /*
-    for(int y=pieceBottom; y<GRID_HEIGHT; y++){
+    // Made it through all of them, so that means put it on the ground.
+    printf("Nothing was found: so placing on ground level.\n");
+    for(int i=0; i<blocksSize; i++){
+        int rowDest = GRID_HEIGHT-1; 
         for(int i=0; i<blocksSize; i++){
-            if(getTile(blocks[i]->x, y, grid)->block != NULL){
-                // Place piece above this row
-                int rowDest = y-1; 
-                for(int j=0; j<blocksSize; j++){
-                    //int diffFromRowDest = y - blocks[j]->y;
-                    //int blockY = blocks[j]->y;
-                    //int diff = y - rowDest;
-                    int diff = (rowDest-blocks[j]->y);
-                    printf("diff:%i", diff);
-                    printf("rowDest - (rowDest-blocks[j]->y):%i\n", rowDest - (rowDest-blocks[j]->y));
-                    getTile(blocks[j]->x, diff, grid)->block = blocks[j];
-                }
-                return;
-            }
-        }
-   } 
-   */
+            blocks[i]->setPosition(blocks[i]->x, rowDest-baseOffsets[i]);
+            getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
+        } 
+    }
+    return;
+
 }
