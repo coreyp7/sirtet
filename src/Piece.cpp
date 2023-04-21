@@ -95,3 +95,51 @@ int Piece::insertBlocksAtCurrPos(){
         getTile(blocks[i]->x, blocks[i]->y, grid)->block = blocks[i];
     }
 }
+
+// For row in grid
+//  for block in blocks
+//   if getTile(block.x, row y) != null
+//    place this piece's blocks on the row above this row (row-1)
+//      return
+void Piece::landInstant(){
+    printf("landInstant()\n");
+    //Y NEEDS TO BE CHANGED TO BE THE BOTTOM OF THIS PIECE (Y BOTTOM)
+    int pieceBottom = -1;
+    for(int i=0; i<blocksSize; i++){
+        if(blocks[i]->y > pieceBottom){
+            pieceBottom = blocks[i]->y;
+        }
+    }
+    // Okay I think I have to go to work now:
+    // This logic for the outer loop is valid, but the loops inside it are producing crazy shit.
+    // Use the outer loop and check that its only iterating through rows that are below the Piece.
+    //
+    // Then, iterate through this Piece's blocks and see if there's a block in its spot in the current row.
+    //
+    // If there is, then move all of the pieces down the same amount.
+    // NOTE: it may be useful to calculate the distance from the 'bottom' of the Piece a block is.
+    // So, if it IS the bottom of the Piece, then the distance would be 0.
+    // But if say, you're the top block of a L piece, then the distance would be 2.
+    // This way we can offset the destination of the block, therefore keeping the shape of the Piece in tact
+    // when it instantly lands. 
+    //
+    // Additional logic may have to be added to main.cpp to set 'landed' to true instantly.
+    for(int y=pieceBottom; y<GRID_HEIGHT; y++){
+        for(int i=0; i<blocksSize; i++){
+            if(getTile(blocks[i]->x, y, grid)->block != NULL){
+                // Place piece above this row
+                int rowDest = y-1; 
+                for(int j=0; j<blocksSize; j++){
+                    //int diffFromRowDest = y - blocks[j]->y;
+                    //int blockY = blocks[j]->y;
+                    //int diff = y - rowDest;
+                    int diff = (rowDest-blocks[j]->y);
+                    printf("diff:%i", diff);
+                    printf("rowDest - (rowDest-blocks[j]->y):%i\n", rowDest - (rowDest-blocks[j]->y));
+                    getTile(blocks[j]->x, diff, grid)->block = blocks[j];
+                }
+                return;
+            }
+        }
+   } 
+}

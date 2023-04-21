@@ -79,12 +79,14 @@ void holdPiece(Piece* piece){
 }
 
 
+
 void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece){
     for(int i=0; i<keysPressed.size(); i++){
         switch(keysPressed.at(i)){
-            // case SDLK_w:
-            //     piece->move(UP);
-            //     break;
+            case SDLK_w:
+                piece->landInstant();
+                
+                break;
             case SDLK_a:
                 piece->move(LEFT);
                 break;
@@ -246,7 +248,6 @@ void gameLoop(){
                     quit = true;
                     break;
                 case SDL_KEYDOWN:
-                    //handleInput(event.key.keysym.sym, &testPiece);
                     keysPressed.push_back(event.key.keysym.sym);
                     break;
             }

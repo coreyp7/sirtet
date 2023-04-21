@@ -29,6 +29,7 @@ class Piece {
         // This just sets everything in this object to NULL, but leaves blocks
         // in memory (because they are cleaned up via the grid in main).
         void cleanupLanded();
+        void landInstant();
 
         int insertBlocksAtCurrPos();
         
