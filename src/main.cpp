@@ -23,16 +23,47 @@
 #include "include/I_Piece.h"
 #include "include/Tile.h"
 
-
+// Function signatures in main.cpp (in order)
+void fillGrid();
+void holdPiece(Piece* piece);
+void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece);
+bool isRowEmpty(int y);
+bool isRowFull(int y);
+void clearCompleteLines();
+Piece* getRandomPiece();
+bool checkForGameOver();
+void renderBlock(Block* block, SDL_Rect* dest);
+void gameLoop();
+// main
+void renderTetrisGrid();
+void renderHeldPiece();
+int loadAssets();
 int init();
 void cleanup();
-Piece* getRandomPiece();
 
 const int WINDOW_WIDTH = 1080;
 const int WINDOW_HEIGHT = 720;
 const int TILE_SIZE = 25;
 const int PIECE_START_POS_X = (GRID_WIDTH/2)-1;
 const int PIECE_START_POS_Y = 1;
+// Viewport for entire window
+SDL_Rect windowViewport = {
+    0, 0, WINDOW_WIDTH, WINDOW_HEIGHT
+};
+
+// Viewport specifically for the tetris grid.
+SDL_Rect gridViewport = {
+        ( WINDOW_WIDTH - (GRID_WIDTH*TILE_SIZE) )/2,
+        WINDOW_HEIGHT - (GRID_HEIGHT*TILE_SIZE) - 50,
+        GRID_WIDTH*TILE_SIZE, GRID_HEIGHT*TILE_SIZE
+};
+
+// For held piece
+SDL_Rect heldViewport = {
+    gridViewport.x - 100,
+    gridViewport.y,
+    5*10, 4*10
+};
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -282,22 +313,6 @@ void gameLoop(){
 
     SDL_Event event;
 
-    SDL_Rect windowViewport = {
-        0, 0, WINDOW_WIDTH, WINDOW_HEIGHT
-    };
-
-    // Viewport specifically for the tetris grid.
-    SDL_Rect gridViewport = {
-            ( WINDOW_WIDTH - (GRID_WIDTH*TILE_SIZE) )/2,
-            WINDOW_HEIGHT - (GRID_HEIGHT*TILE_SIZE) - 50,
-            GRID_WIDTH*TILE_SIZE, GRID_HEIGHT*TILE_SIZE
-    };
-
-    SDL_Rect heldViewport = {
-        gridViewport.x - 100,
-        gridViewport.y,
-        5*10, 4*10
-    };
 
     Text info = Text(renderer, globalFont, SDL_COLOR_WHITE);
 
@@ -307,10 +322,8 @@ void gameLoop(){
     int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
     
     for(int i=0; i<4; i++){
-        //pieceQueue.push(getRandomPiece());
         pieceQueue[i] = getRandomPiece();
     }
-    //currentPiece = pieceQueue.front();
     currentPiece = pieceQueue[0];
 
     pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
@@ -375,40 +388,16 @@ void gameLoop(){
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        // Being rendering stuff around the tetris grid.
         SDL_RenderSetViewport(renderer, &windowViewport); 
-        /*
-        // go through queue and show the Pieces
-        for(int i=0; i<4; i++){
-            Piece* piece = pieceQueue[i];
-            // now we want to render this piece's blocks onto the queueGrid
-            
-        }
-        */
-
         if(gameOver){
             std::ostringstream oss;
             info.changeText("GAME OVER");
             info.render((WINDOW_WIDTH-info.getWidth())/2, 0);
         }
 
-        // Start rendering tetris grid, pieces, etc.
-        SDL_RenderSetViewport(renderer, &gridViewport);
+        renderTetrisGrid();
 
-        // render grid
-        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
-        for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
-            SDL_Rect rect = {grid[i].x * TILE_SIZE, grid[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-
-            if(grid[i].block != NULL){
-                renderBlock(grid[i].block, &rect);
-            }
-            else if(SDL_RenderDrawRect(renderer, &rect)<0){
-                printf("SDL_Error:%s\n", SDL_GetError());
-            }
-        }
-
-        // render piece
+        // Render current piece
         Block *block;
         for(int i=0; i<4; i++){
             block = currentPiece->blocks[i];
@@ -416,36 +405,47 @@ void gameLoop(){
             renderBlock(block, &rect);
         }
 
+        renderHeldPiece();
+
+        //TODO: render queue
+
+        SDL_RenderPresent(renderer);
+    }
+    
+}
+
+// Renders in 'gridViewport'. 
+// Draws grid lines and draws all Tiles in grid that have a block in them.
+void renderTetrisGrid(){
+    // Start rendering tetris grid, pieces, etc.
+    SDL_RenderSetViewport(renderer, &gridViewport);
+
+    // render grid
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
+    for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
+        SDL_Rect rect = {grid[i].x * TILE_SIZE, grid[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+
+        if(grid[i].block != NULL){
+            renderBlock(grid[i].block, &rect);
+        }
+        else if(SDL_RenderDrawRect(renderer, &rect)<0){
+            printf("SDL_Error:%s\n", SDL_GetError());
+        }
+    }
+}
+
+void renderHeldPiece(){
         // now draw stuff around grid
         SDL_RenderSetViewport(renderer, &heldViewport);
-
-        // render piece
-        //Block *block; use heldPiece
-        /*
-        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
-        for(int i=0; i<20; i++){
-            SDL_Rect rect = {heldGrid[i].x * 10, heldGrid[i].y * 10, 10, 10};
-
-            if(heldGrid[i].block != NULL){
-                renderBlock(heldGrid[i].block, &rect);
-            }
-            else 
-            if(SDL_RenderDrawRect(renderer, &rect)<0){
-                printf("SDL_Error:%s\n", SDL_GetError());
-            }
-        } 
-        */
         // render held piece
         if(heldPiece != NULL){
+            Block* block;
             for(int i=0; i<4; i++){
                 block = heldPiece->blocks[i];
                 SDL_Rect newrect = {block->x * 10, block->y * 10, 10, 10};
                 renderBlock(block, &newrect);
             }
         }
-        SDL_RenderPresent(renderer);
-    }
-    
 }
 
 
