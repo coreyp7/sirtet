@@ -45,7 +45,6 @@ std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
 //std::queue<Piece*> pieceQueue;
 Piece* pieceQueue[4];
 Piece* currentPiece;
-Piece* heldPiece;
 bool heldPieceLocked = false;
 
 bool landed = false;
@@ -59,6 +58,8 @@ SDL_Rect blockTextures[7];
 
 // visual stuff
 std::array<Tile, 6*25> queueGrid;
+//std::array<Tile, 5*4> heldGrid;
+Piece* heldPiece;
 
 // Populates the grid array with every Tile in our grid.
 void fillGrid(){
@@ -68,6 +69,15 @@ void fillGrid(){
             grid[rowStart + column] = Tile{column, row, NULL};
         }
     }
+
+/*
+    for(int row=0; row<4; row++){
+        for(int column=0; column<5; column++){
+            int rowStart = row * 5; // first tile pos in this row
+            heldGrid[rowStart + column] = Tile{column, row, NULL};
+        }
+    }
+    */
 }
 
 // Provided a reference to the Piece, this will store this Piece in the
@@ -81,7 +91,8 @@ void holdPiece(Piece* piece){
     printf("Before: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
     if(heldPiece != NULL){
         std::swap(currentPiece, heldPiece);
-        heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
+        currentPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
+        //heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
     } else {  // first time holding Piece
         heldPiece = currentPiece;
         //pieceQueue.pop();
@@ -94,8 +105,11 @@ void holdPiece(Piece* piece){
 
         currentPiece = pieceQueue[0];
 
-        heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
+
+        //heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
+
     }
+    heldPiece->setPosition(1, 2);
     heldPieceLocked = true;
     printf("After: (heldPiece=%p), (currentPiece=%p)\n", heldPiece, currentPiece);
 }
@@ -279,6 +293,12 @@ void gameLoop(){
             GRID_WIDTH*TILE_SIZE, GRID_HEIGHT*TILE_SIZE
     };
 
+    SDL_Rect heldViewport = {
+        gridViewport.x - 100,
+        gridViewport.y,
+        5*10, 4*10
+    };
+
     Text info = Text(renderer, globalFont, SDL_COLOR_WHITE);
 
     Uint32 startOfFrame;
@@ -356,12 +376,15 @@ void gameLoop(){
         SDL_RenderClear(renderer);
 
         // Being rendering stuff around the tetris grid.
-        SDL_RenderSetViewport(renderer, &windowViewport);
-
+        SDL_RenderSetViewport(renderer, &windowViewport); 
+        /*
         // go through queue and show the Pieces
         for(int i=0; i<4; i++){
+            Piece* piece = pieceQueue[i];
+            // now we want to render this piece's blocks onto the queueGrid
             
         }
+        */
 
         if(gameOver){
             std::ostringstream oss;
@@ -393,6 +416,33 @@ void gameLoop(){
             renderBlock(block, &rect);
         }
 
+        // now draw stuff around grid
+        SDL_RenderSetViewport(renderer, &heldViewport);
+
+        // render piece
+        //Block *block; use heldPiece
+        /*
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
+        for(int i=0; i<20; i++){
+            SDL_Rect rect = {heldGrid[i].x * 10, heldGrid[i].y * 10, 10, 10};
+
+            if(heldGrid[i].block != NULL){
+                renderBlock(heldGrid[i].block, &rect);
+            }
+            else 
+            if(SDL_RenderDrawRect(renderer, &rect)<0){
+                printf("SDL_Error:%s\n", SDL_GetError());
+            }
+        } 
+        */
+        // render held piece
+        if(heldPiece != NULL){
+            for(int i=0; i<4; i++){
+                block = heldPiece->blocks[i];
+                SDL_Rect newrect = {block->x * 10, block->y * 10, 10, 10};
+                renderBlock(block, &newrect);
+            }
+        }
         SDL_RenderPresent(renderer);
     }
     
