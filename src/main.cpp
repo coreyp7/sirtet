@@ -512,17 +512,21 @@ void renderGhostPiece(){
             }
         }
     }
-    /*
+
     // Made it through all of them, so that means put it on the ground.
-    printf("Nothing was found: so placing on ground level.\n");
-    for(int i=0; i<blocksSize; i++){
+    //printf("Nothing was found: so placing on ground level.\n");
+    for(int i=0; i<4; i++){
         int rowDest = GRID_HEIGHT-1; 
-        for(int i=0; i<blocksSize; i++){
-            blocks[i]->setPosition(blocks[i]->x, rowDest-baseOffsets[i]);
-            getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
+        for(int i=0; i<4; i++){
+            Block *block;
+            for(int i=0; i<4; i++){
+                block = currentPiece->blocks[i];
+                SDL_Rect rect = {block->x * TILE_SIZE, ((19-baseOffsets[i]) * TILE_SIZE), TILE_SIZE, TILE_SIZE};
+                renderBlock(block, &rect);
+            }
         } 
     }
-    */
+
     return;
 
 
