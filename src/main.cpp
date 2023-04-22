@@ -38,6 +38,7 @@ void gameLoop();
 void renderTetrisGrid();
 void renderHeldPiece();
 void renderPieceQueue();
+void renderGhostPiece();
 int loadAssets();
 int init();
 void cleanup();
@@ -418,6 +419,8 @@ void gameLoop(){
         //TODO: render queue
         renderPieceQueue();
 
+        renderGhostPiece();
+
         SDL_RenderPresent(renderer);
     }
     
@@ -473,6 +476,56 @@ void renderPieceQueue(){
             renderBlock(block, &rect);
         }
     }
+}
+
+// return row to place Piece on
+void renderGhostPiece(){
+    SDL_RenderSetViewport(renderer, &gridViewport);
+    int pieceBase = -1;
+    Block** blocks = currentPiece->blocks;
+    for(int i=0; i<currentPiece->blocksSize; i++){
+        if(blocks[i]->y > pieceBase){
+            pieceBase = blocks[i]->y;
+        } 
+    }
+    // Contains offset of block from the Piece's 'base'.
+    int baseOffsets[4];
+    for(int i=0; i<currentPiece->blocksSize; i++){
+        baseOffsets[i] = pieceBase - blocks[i]->y;
+    }
+
+    // Go through each row (top to bottom) until we find a tile with block in it
+    for(int y=pieceBase; y<GRID_HEIGHT; y++){
+        for(int blockIndex=0; blockIndex<4; blockIndex++){
+            if(getTile(blocks[blockIndex]->x, y-baseOffsets[blockIndex], &grid)->block != NULL){
+               // rowDes is the row where our Piece base is going.
+                int rowDest = y - 1;
+
+                Block *block;
+                for(int i=0; i<4; i++){
+                    block = currentPiece->blocks[i];
+                    SDL_Rect rect = {block->x * TILE_SIZE, (rowDest-baseOffsets[i]) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+                    renderBlock(block, &rect);
+                }
+                
+                return;
+            }
+        }
+    }
+    /*
+    // Made it through all of them, so that means put it on the ground.
+    printf("Nothing was found: so placing on ground level.\n");
+    for(int i=0; i<blocksSize; i++){
+        int rowDest = GRID_HEIGHT-1; 
+        for(int i=0; i<blocksSize; i++){
+            blocks[i]->setPosition(blocks[i]->x, rowDest-baseOffsets[i]);
+            getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
+        } 
+    }
+    */
+    return;
+
+
 }
 
 int main(int argc, char* args[]){
