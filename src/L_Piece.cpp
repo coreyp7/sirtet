@@ -14,6 +14,9 @@ L_Piece::L_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
     blocks[2] = (new Block{x, y});
     blocks[3] = (new Block{x, y-1});
     this->grid = grid;
+    for(int i=0; i<blocksSize; i++){
+        blocks[i]->pieceType = 'L';
+    }
 
     facing = UP;
 }

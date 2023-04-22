@@ -7,7 +7,10 @@ Z_Piece::Z_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
     blocks[1] = (new Block{x+1, y});
     blocks[2] = (new Block{x, y+1});
     blocks[3] = (new Block{x+1, y-1});
-    this->grid = grid;
+    this->grid = grid; 
+    for(int i=0; i<blocksSize; i++){
+        blocks[i]->pieceType = 'Z';
+    }
 
     facing = UP;
 }

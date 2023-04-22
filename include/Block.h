@@ -3,6 +3,7 @@
 class Block {
     public:
         int x, y;
+        char pieceType;
 
         Block();
         Block(int x, int y);

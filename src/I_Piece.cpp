@@ -8,6 +8,9 @@ I_Piece::I_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
     blocks[2] = (new Block{x+2, y});
     blocks[3] = (new Block{x+3, y});
     this->grid = grid;
+    for(int i=0; i<blocksSize; i++){
+        blocks[i]->pieceType = 'I';
+    }
 
     facing = RIGHT;
 }

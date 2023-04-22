@@ -8,6 +8,9 @@ T_Piece::T_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
     blocks[2] = (new Block{x, y-1});
     blocks[3] = (new Block{x+1, y});
     this->grid = grid;
+    for(int i=0; i<blocksSize; i++){
+        blocks[i]->pieceType = 'T';
+    }
 
     facing = UP;
 }
