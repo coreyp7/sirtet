@@ -494,6 +494,8 @@ void renderGhostPiece(){
         baseOffsets[i] = pieceBase - blocks[i]->y;
     }
 
+    SDL_SetTextureAlphaMod(spriteSheet, 50);
+
     // Go through each row (top to bottom) until we find a tile with block in it
     for(int y=pieceBase; y<GRID_HEIGHT; y++){
         for(int blockIndex=0; blockIndex<4; blockIndex++){
@@ -508,6 +510,7 @@ void renderGhostPiece(){
                     renderBlock(block, &rect);
                 }
                 
+                SDL_SetTextureAlphaMod(spriteSheet, 255);
                 return;
             }
         }
@@ -515,18 +518,16 @@ void renderGhostPiece(){
 
     // Made it through all of them, so that means put it on the ground.
     //printf("Nothing was found: so placing on ground level.\n");
-    for(int i=0; i<4; i++){
-        int rowDest = GRID_HEIGHT-1; 
-        for(int i=0; i<4; i++){
-            Block *block;
-            for(int i=0; i<4; i++){
-                block = currentPiece->blocks[i];
-                SDL_Rect rect = {block->x * TILE_SIZE, ((19-baseOffsets[i]) * TILE_SIZE), TILE_SIZE, TILE_SIZE};
-                renderBlock(block, &rect);
-            }
-        } 
-    }
+    int rowDest = GRID_HEIGHT-1; 
+    Block *block;
 
+    for(int i=0; i<4; i++){
+        block = currentPiece->blocks[i];
+        SDL_Rect rect = {block->x * TILE_SIZE, ((19-baseOffsets[i]) * TILE_SIZE), TILE_SIZE, TILE_SIZE};
+        renderBlock(block, &rect);
+    }
+    
+    SDL_SetTextureAlphaMod(spriteSheet, 255);
     return;
 
 
