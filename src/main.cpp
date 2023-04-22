@@ -42,7 +42,8 @@ const SDL_Color SDL_COLOR_GREEN = {0, 255, 0, 255};
 bool gameOver = false;
 
 std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
-std::queue<Piece*> pieceQueue;
+//std::queue<Piece*> pieceQueue;
+Piece* pieceQueue[4];
 Piece* currentPiece;
 Piece* heldPiece;
 bool heldPieceLocked = false;
@@ -55,6 +56,9 @@ Uint32 allowedToDrop;
 SDL_Texture* blockTexture;
 SDL_Texture* spriteSheet;
 SDL_Rect blockTextures[7];
+
+// visual stuff
+std::array<Tile, 6*25> queueGrid;
 
 // Populates the grid array with every Tile in our grid.
 void fillGrid(){
@@ -80,9 +84,16 @@ void holdPiece(Piece* piece){
         heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
     } else {  // first time holding Piece
         heldPiece = currentPiece;
-        pieceQueue.pop();
-        pieceQueue.push(getRandomPiece());
-        currentPiece = pieceQueue.front();
+        //pieceQueue.pop();
+        //pieceQueue.push(getRandomPiece());
+        //currentPiece = pieceQueue.front();
+        pieceQueue[0] = pieceQueue[1];
+        pieceQueue[1] = pieceQueue[2];
+        pieceQueue[2] = pieceQueue[3];
+        pieceQueue[3] = getRandomPiece();
+
+        currentPiece = pieceQueue[0];
+
         heldPiece->setPosition(PIECE_START_POS_X, PIECE_START_POS_Y);
     }
     heldPieceLocked = true;
@@ -276,9 +287,11 @@ void gameLoop(){
     int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
     
     for(int i=0; i<4; i++){
-        pieceQueue.push(getRandomPiece());
+        //pieceQueue.push(getRandomPiece());
+        pieceQueue[i] = getRandomPiece();
     }
-    currentPiece = pieceQueue.front();
+    //currentPiece = pieceQueue.front();
+    currentPiece = pieceQueue[0];
 
     pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
     allowedToDrop = 0;
@@ -311,14 +324,19 @@ void gameLoop(){
                     // Insert blocks into position of Piece when landed,
                     // then get rid of that Piece in the queue.
                     currentPiece->insertBlocksAtCurrPos();
-                    pieceQueue.pop();
+                    //pieceQueue.pop();
+
+                    pieceQueue[0] = pieceQueue[1];
+                    pieceQueue[1] = pieceQueue[2];
+                    pieceQueue[2] = pieceQueue[3];
+                    pieceQueue[3] = getRandomPiece();
 
                     // delete current piece from memory
                     currentPiece->cleanupLanded();
                     delete currentPiece;
 
-                    pieceQueue.push(getRandomPiece());
-                    currentPiece = pieceQueue.front();
+                    //currentPiece = pieceQueue.front();
+                    currentPiece = pieceQueue[0];
                     heldPieceLocked = false;
 
                     clearCompleteLines();
@@ -339,6 +357,11 @@ void gameLoop(){
 
         // Being rendering stuff around the tetris grid.
         SDL_RenderSetViewport(renderer, &windowViewport);
+
+        // go through queue and show the Pieces
+        for(int i=0; i<4; i++){
+            
+        }
 
         if(gameOver){
             std::ostringstream oss;
