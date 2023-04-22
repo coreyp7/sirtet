@@ -37,6 +37,7 @@ void gameLoop();
 // main
 void renderTetrisGrid();
 void renderHeldPiece();
+void renderPieceQueue();
 int loadAssets();
 int init();
 void cleanup();
@@ -56,6 +57,13 @@ SDL_Rect gridViewport = {
         ( WINDOW_WIDTH - (GRID_WIDTH*TILE_SIZE) )/2,
         WINDOW_HEIGHT - (GRID_HEIGHT*TILE_SIZE) - 50,
         GRID_WIDTH*TILE_SIZE, GRID_HEIGHT*TILE_SIZE
+};
+
+SDL_Rect queueViewport = {
+    gridViewport.x + gridViewport.w,
+    gridViewport.y,
+    100, //(4*10)*5
+    300
 };
 
 // For held piece
@@ -408,6 +416,7 @@ void gameLoop(){
         renderHeldPiece();
 
         //TODO: render queue
+        renderPieceQueue();
 
         SDL_RenderPresent(renderer);
     }
@@ -448,6 +457,23 @@ void renderHeldPiece(){
         }
 }
 
+void renderPieceQueue(){
+    SDL_RenderSetViewport(renderer, &queueViewport);
+
+    Piece* piece;
+    Block* block;
+    for(int i=1; i<4; i++){
+        piece = pieceQueue[i];
+        
+        for(int j=0; j<4; j++){
+            block = piece->blocks[j];
+            SDL_Rect rect = {block->x * 10, 
+                (block->y * 10) + (i * 60),
+                10, 10};
+            renderBlock(block, &rect);
+        }
+    }
+}
 
 int main(int argc, char* args[]){
     int good = init();
