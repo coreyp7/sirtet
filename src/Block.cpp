@@ -5,6 +5,9 @@ Block::Block(int x, int y){
     this->y = y;
 }
 
+Block::~Block(){
+}
+
 Block::Block(){
     
 }

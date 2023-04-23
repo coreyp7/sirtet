@@ -1,4 +1,5 @@
 #pragma once
+#include <stdio.h>
 
 class Block {
     public:
@@ -6,6 +7,7 @@ class Block {
         char pieceType;
 
         Block();
+        ~Block();
         Block(int x, int y);
         void setPosition(int x, int y);
 };

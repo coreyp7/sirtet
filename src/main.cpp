@@ -94,7 +94,7 @@ bool landed = false;
 Uint32 pieceSpawnTime; //SDL_GetTicks() + fallSpeed; // used for dropping piece
 Uint32 allowedToDrop;
 
-SDL_Texture* blockTexture;
+//SDL_Texture* blockTexture;
 SDL_Texture* spriteSheet;
 SDL_Rect blockTextures[7];
 
@@ -274,7 +274,7 @@ void clearCompleteLines2(){
         level++;
         printf("Level increased to %i\n", level);
         // TODO: change speed here
-        fallSpeed -= 25;
+        fallSpeed -= 45;
     }
 
 }
@@ -348,8 +348,6 @@ void gameLoop(){
     bool quit = false;
 
     SDL_Event event;
-
-
     Text info = Text(renderer, globalFont, SDL_COLOR_WHITE);
 
     Uint32 startOfFrame;
@@ -692,6 +690,34 @@ int init(){
 }
 
 void cleanup(){
+
+    // Cleanup Blocks still in the grid
+    for(int i=0; i<grid.size(); i++){
+        if(grid[i].block != NULL){
+            delete grid[i].block;
+        }
+    }
+    printf("here\n");
+
+    // delete Pieces still in the Piece queue
+    for(int i=0; i<4; i++){
+        for(int j=0; j<4; j++){
+            delete pieceQueue[i]->blocks[j];
+        }
+        delete pieceQueue[i];
+    }
+    printf("here\n");
+
+    delete currentPiece;
+    delete heldPiece;
+
+    printf("here\n");
+
+    //TTF_CloseFont(globalFont);
+    //TTF_Quit();
+
+    SDL_DestroyTexture(spriteSheet);
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
