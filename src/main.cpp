@@ -274,7 +274,12 @@ void clearCompleteLines2(){
         level++;
         printf("Level increased to %i\n", level);
         // TODO: change speed here
-        fallSpeed -= 45;
+        if(fallSpeed > 100){
+            fallSpeed = fallSpeed - 100;
+        } else {
+            fallSpeed -= 10;
+        }
+        printf("speed now %i\n", fallSpeed);
     }
 
 }
