@@ -101,6 +101,11 @@ std::array<Tile, 6*25> queueGrid;
 //std::array<Tile, 5*4> heldGrid;
 Piece* heldPiece;
 
+Uint32 clearPause = -1;
+bool linesCleared = false;
+std::vector<int> clearedRows;
+
+
 // Populates the grid array with every Tile in our grid.
 void fillGrid(){
     for(int row=0; row<GRID_HEIGHT; row++){
@@ -216,7 +221,7 @@ void clearCompleteLines(){
     int rowIndex; // start of this row
     bool full = true; // true until proven false
 
-    std::vector<int> clearedRows;
+    //std::vector<int> clearedRows;
     // Loop through array one row at a time
     for(int row=0; row<GRID_HEIGHT; row++){
         if(isRowFull(row)){
@@ -231,8 +236,14 @@ void clearCompleteLines(){
 
     if(clearedRows.empty()){
         return;
+    } else {
+        clearPause = SDL_GetTicks() + 500;
+        linesCleared = true;
     }
 
+}
+
+void clearCompleteLines2(){
     // Move shit down
     int newRow = clearedRows.back();
 
@@ -250,6 +261,7 @@ void clearCompleteLines(){
             newRow--;
         }
     }
+
 }
 
 Piece* getRandomPiece(){
@@ -351,46 +363,55 @@ void gameLoop(){
                     break;
             }
         }
-
         if(!gameOver){
-            // GAME STATE //
-            if(!keysPressed.empty()){
-                handleInput(keysPressed, currentPiece);
-                keysPressed.clear();
-            }
-            
-            
-            if((pieceSpawnTime < SDL_GetTicks())){
-                landed = !currentPiece->move(DOWN);
-                if(landed){
-                    // Insert blocks into position of Piece when landed,
-                    // then get rid of that Piece in the queue.
-                    currentPiece->insertBlocksAtCurrPos();
-                    //pieceQueue.pop();
-
-                    pieceQueue[0] = pieceQueue[1];
-                    pieceQueue[1] = pieceQueue[2];
-                    pieceQueue[2] = pieceQueue[3];
-                    pieceQueue[3] = getRandomPiece();
-
-                    // delete current piece from memory
-                    currentPiece->cleanupLanded();
-                    delete currentPiece;
-
-                    //currentPiece = pieceQueue.front();
-                    currentPiece = pieceQueue[0];
-                    heldPieceLocked = false;
-
-                    clearCompleteLines();
-
-                    if(checkForGameOver()){
-                        // do game over shit
-                        gameOver = true;
+            // Don't simulate game state if there's a game pause
+            // from lines being cleared.
+            if(!linesCleared){
+                    // GAME STATE //
+                    if(!keysPressed.empty()){
+                        handleInput(keysPressed, currentPiece);
+                        keysPressed.clear();
                     }
-                }
-                pieceSpawnTime = SDL_GetTicks() + fallSpeed;
-            }
+                    
+                    
+                    if((pieceSpawnTime < SDL_GetTicks())){
+                        landed = !currentPiece->move(DOWN);
+                        if(landed){
+                            // Insert blocks into position of Piece when landed,
+                            // then get rid of that Piece in the queue.
+                            currentPiece->insertBlocksAtCurrPos();
+                            //pieceQueue.pop();
 
+                            pieceQueue[0] = pieceQueue[1];
+                            pieceQueue[1] = pieceQueue[2];
+                            pieceQueue[2] = pieceQueue[3];
+                            pieceQueue[3] = getRandomPiece();
+
+                            // delete current piece from memory
+                            currentPiece->cleanupLanded();
+                            delete currentPiece;
+
+                            //currentPiece = pieceQueue.front();
+                            currentPiece = pieceQueue[0];
+                            heldPieceLocked = false;
+
+                            clearCompleteLines();
+
+                            if(checkForGameOver()){
+                                // do game over shit
+                                gameOver = true;
+                            }
+                        }
+                        pieceSpawnTime = SDL_GetTicks() + fallSpeed;
+                    }
+                } else if(clearPause < SDL_GetTicks() && linesCleared){
+                    clearPause = -1;
+                    linesCleared = false;
+                    clearCompleteLines2();
+                    clearedRows.clear();
+                } else {
+
+                }
         }
 
         // RENDERING //
@@ -420,7 +441,6 @@ void gameLoop(){
         renderPieceQueue();
 
         renderGhostPiece();
-
         SDL_RenderPresent(renderer);
     }
     
