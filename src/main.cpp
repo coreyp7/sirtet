@@ -94,6 +94,8 @@ bool landed = false;
 Uint32 pieceSpawnTime; //SDL_GetTicks() + fallSpeed; // used for dropping piece
 Uint32 allowedToDrop;
 
+SDL_Texture* bg;
+
 //SDL_Texture* blockTexture;
 SDL_Texture* spriteSheet;
 SDL_Rect blockTextures[7];
@@ -437,6 +439,8 @@ void gameLoop(){
         // RENDERING //
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+        
+        SDL_RenderCopyEx(renderer, bg, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
 
         SDL_RenderSetViewport(renderer, &windowViewport); 
         if(gameOver){
@@ -466,10 +470,10 @@ void gameLoop(){
         renderPieceQueue();
 
         SDL_RenderSetViewport(renderer, &windowViewport);
-        levelText.changeText(std::to_string(level));
-        linesClearedText.changeText(std::to_string(amountOfLinesCleared));
-        levelText.render(0, 0);
-        linesClearedText.render(0, levelText.getHeight());
+        levelText.changeText("Lines Cleared:"+std::to_string(level));
+        linesClearedText.changeText("Level: "+std::to_string(amountOfLinesCleared));
+        levelText.render((WINDOW_WIDTH-levelText.getWidth())/2, 100);
+        linesClearedText.render((WINDOW_WIDTH-levelText.getWidth())/2, 100 + levelText.getHeight());
 
         //renderGhostPiece();
         SDL_RenderPresent(renderer);
@@ -650,6 +654,12 @@ int loadAssets(){
         blockTextures[i] = {i*44, 0, 44, 44};
     }
 
+    bg = IMG_LoadTexture(renderer, "assets/bg3.png");
+    if(bg == NULL){
+        printf("Couldn't load bg.\n%s\n", IMG_GetError());
+        return -3;
+    }
+
     return 0;
 }
 
@@ -721,7 +731,7 @@ void cleanup(){
     //TTF_CloseFont(globalFont);
     //TTF_Quit();
 
-    SDL_DestroyTexture(spriteSheet);
+    //SDL_DestroyTexture(spriteSheet);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
