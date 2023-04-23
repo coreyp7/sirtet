@@ -7,6 +7,7 @@
 #include <array>
 #include <vector>
 #include <queue>
+#include <string>
 
 /* */
 #include "include/Text.h"
@@ -107,6 +108,9 @@ bool linesCleared = false;
 std::vector<int> clearedRows;
 std::vector<Particle*> particles;
 
+int amountOfLinesCleared = 0;
+int level = 0;
+int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
 
 
 // Populates the grid array with every Tile in our grid.
@@ -265,6 +269,14 @@ void clearCompleteLines2(){
         }
     }
 
+    amountOfLinesCleared += clearedRows.size();
+    if(amountOfLinesCleared > (level*10)+10){
+        level++;
+        printf("Level increased to %i\n", level);
+        // TODO: change speed here
+        fallSpeed -= 25;
+    }
+
 }
 
 Piece* getRandomPiece(){
@@ -343,7 +355,6 @@ void gameLoop(){
     Uint32 startOfFrame;
     Uint32 endOfFrame;
 
-    int fallSpeed = 500; // TODO: change variable as player plays (based on lines cleared)
     
     for(int i=0; i<4; i++){
         pieceQueue[i] = getRandomPiece();
@@ -353,6 +364,11 @@ void gameLoop(){
     pieceSpawnTime = SDL_GetTicks() + fallSpeed; // used for dropping piece
     allowedToDrop = 0;
     std::vector<SDL_Keycode> keysPressed;
+
+    Text levelText = Text(renderer, globalFont, SDL_COLOR_WHITE);
+    Text linesClearedText = Text(renderer, globalFont, SDL_COLOR_WHITE);
+    levelText.changeText(std::to_string(level));
+    linesClearedText.changeText(std::to_string(amountOfLinesCleared));
     
     while(!quit){
         // event loop
@@ -445,6 +461,12 @@ void gameLoop(){
 
         //TODO: render queue
         renderPieceQueue();
+
+        SDL_RenderSetViewport(renderer, &windowViewport);
+        levelText.changeText(std::to_string(level));
+        linesClearedText.changeText(std::to_string(amountOfLinesCleared));
+        levelText.render(0, 0);
+        linesClearedText.render(0, levelText.getHeight());
 
         //renderGhostPiece();
         SDL_RenderPresent(renderer);
