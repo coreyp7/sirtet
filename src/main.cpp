@@ -64,15 +64,15 @@ SDL_Rect gridViewport = {
 
 SDL_Rect queueViewport = {
     gridViewport.x + gridViewport.w,
-    gridViewport.y,
+    gridViewport.y+150,
     100, //(4*10)*5
     300
 };
 
 // For held piece
 SDL_Rect heldViewport = {
-    gridViewport.x - 100,
-    gridViewport.y,
+    gridViewport.x - 70,
+    gridViewport.y + 205,
     5*10, 4*10
 };
 
@@ -95,6 +95,7 @@ Uint32 pieceSpawnTime; //SDL_GetTicks() + fallSpeed; // used for dropping piece
 Uint32 allowedToDrop;
 
 SDL_Texture* bg;
+SDL_Texture* greyPng;
 
 //SDL_Texture* blockTexture;
 SDL_Texture* spriteSheet;
@@ -108,7 +109,7 @@ Piece* heldPiece;
 Uint32 clearPause = -1;
 bool linesCleared = false;
 std::vector<int> clearedRows;
-std::vector<Particle*> particles;
+//std::vector<Particle*> particles;
 
 int amountOfLinesCleared = 0;
 int level = 0;
@@ -353,9 +354,10 @@ void renderBlock(Block* block, SDL_Rect* dest){
 
 void gameLoop(){
     bool quit = false;
+    SDL_Color black = {0, 0, 0, 255};
 
     SDL_Event event;
-    Text info = Text(renderer, globalFont, SDL_COLOR_WHITE);
+    Text info = Text(renderer, globalFont, black);
 
     Uint32 startOfFrame;
     Uint32 endOfFrame;
@@ -370,10 +372,15 @@ void gameLoop(){
     allowedToDrop = 0;
     std::vector<SDL_Keycode> keysPressed;
 
-    Text levelText = Text(renderer, globalFont, SDL_COLOR_WHITE);
-    Text linesClearedText = Text(renderer, globalFont, SDL_COLOR_WHITE);
+
+    Text levelText = Text(renderer, globalFont, black);
+    Text linesClearedText = Text(renderer, globalFont, black);
     levelText.changeText(std::to_string(level));
     linesClearedText.changeText(std::to_string(amountOfLinesCleared));
+    Text levelTextLabel = Text(renderer, globalFont, black);
+    Text linesClearedTextLabel = Text(renderer, globalFont, black);
+    levelTextLabel.changeText("Level:");
+    linesClearedTextLabel.changeText("Lines cleared:");
     
     while(!quit){
         // event loop
@@ -446,7 +453,7 @@ void gameLoop(){
         if(gameOver){
             std::ostringstream oss;
             info.changeText("GAME OVER");
-            info.render((WINDOW_WIDTH-info.getWidth())/2, 0);
+            info.render((WINDOW_WIDTH-info.getWidth())/2, 100);
         }
 
         renderTetrisGrid();
@@ -470,10 +477,14 @@ void gameLoop(){
         renderPieceQueue();
 
         SDL_RenderSetViewport(renderer, &windowViewport);
-        levelText.changeText("Lines Cleared:"+std::to_string(level));
-        linesClearedText.changeText("Level: "+std::to_string(amountOfLinesCleared));
-        levelText.render((WINDOW_WIDTH-levelText.getWidth())/2, 100);
-        linesClearedText.render((WINDOW_WIDTH-levelText.getWidth())/2, 100 + levelText.getHeight());
+        //levelText.changeText("Lines Cleared:"+std::to_string(level));
+        //linesClearedText.changeText("Level: "+std::to_string(amountOfLinesCleared));
+        levelText.changeText(std::to_string(level));
+        linesClearedText.changeText(std::to_string(amountOfLinesCleared));
+        levelText.render(((WINDOW_WIDTH-levelText.getWidth())/2) - 220, 200);
+        linesClearedText.render((WINDOW_WIDTH-levelText.getWidth())/2 + 220, 200);
+        levelTextLabel.render(((WINDOW_WIDTH-levelText.getWidth())/2) - 240, 160);
+        linesClearedTextLabel.render(((WINDOW_WIDTH-levelText.getWidth())/2) + 180, 150);
 
         //renderGhostPiece();
         SDL_RenderPresent(renderer);
@@ -488,10 +499,12 @@ void renderTetrisGrid(){
     SDL_RenderSetViewport(renderer, &gridViewport);
 
     // render grid
-    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
+    //SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
     for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // bg grid color
         SDL_Rect rect = {grid[i].x * TILE_SIZE, grid[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
 
+        SDL_RenderCopyEx(renderer, greyPng, NULL, &rect, 0, NULL, SDL_FLIP_NONE);
 
         if(grid[i].block != NULL){
             renderBlock(grid[i].block, &rect);
@@ -499,11 +512,13 @@ void renderTetrisGrid(){
         else if(SDL_RenderDrawRect(renderer, &rect)<0){
             printf("SDL_Error:%s\n", SDL_GetError());
         }
+        
     }
     
     //TODO: check vector clearedRows for rows to spawn particles in.
     // Put particles into vector of its own so we can make sure
     // we delete all memory in heap.
+    /*
     if(linesCleared && particles.empty()){
         // particles haven't been allocated yet. make them here
         // on the rows in clearedRows vector.
@@ -514,9 +529,7 @@ void renderTetrisGrid(){
             int row = clearedRows[i]*TILE_SIZE;
 
             for(int x=0; x<GRID_WIDTH*TILE_SIZE; x += TILE_SIZE){
-                /*
                 Block* block = getTile(x, row, &grid)->block;// ITS THIS
-                */
                 //Tile* tile = getTile(x, row, &grid);
                 int xPos = x + (TILE_SIZE/2);
                 particles.push_back( new Particle(xPos, row) ); 
@@ -530,6 +543,7 @@ void renderTetrisGrid(){
             particles[i]->render(renderer);
         }
     }
+    */
 }
 
 void renderHeldPiece(){
@@ -654,10 +668,20 @@ int loadAssets(){
         blockTextures[i] = {i*44, 0, 44, 44};
     }
 
-    bg = IMG_LoadTexture(renderer, "assets/bg3.png");
+    bg = IMG_LoadTexture(renderer, "assets/bg32.png");
     if(bg == NULL){
         printf("Couldn't load bg.\n%s\n", IMG_GetError());
         return -3;
+    }
+
+    greyPng = IMG_LoadTexture(renderer, "assets/faded.png");
+    if(greyPng == NULL){
+        printf("Couldn't load faded.\n%s\n", IMG_GetError());
+        return -4;
+    }
+    if(SDL_SetTextureAlphaMod(greyPng, 220) != 0){
+        printf("Couldn't set texture alpha to grey.\n");
+
     }
 
     return 0;
