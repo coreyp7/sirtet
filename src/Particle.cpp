@@ -15,6 +15,8 @@ void Particle::simulate(){
 }
 
 void Particle::render(SDL_Renderer* renderer){
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, opacity);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, opacity);
     SDL_RenderDrawPoint(renderer, x, y);
+    SDL_Rect rect = {x, y, 10, 10};
+    //SDL_RenderDrawRect(renderer, &rect);
 }

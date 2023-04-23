@@ -9,4 +9,5 @@ class Tile {
         int x, y;
 
         Block *block; // store a block that's in this position; NULL if no block in this tile.
+
 };

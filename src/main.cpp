@@ -22,6 +22,7 @@
 #include "include/O_Piece.h"
 #include "include/I_Piece.h"
 #include "include/Tile.h"
+#include "include/Particle.h"
 
 // Function signatures in main.cpp (in order)
 void fillGrid();
@@ -104,6 +105,8 @@ Piece* heldPiece;
 Uint32 clearPause = -1;
 bool linesCleared = false;
 std::vector<int> clearedRows;
+std::vector<Particle*> particles;
+
 
 
 // Populates the grid array with every Tile in our grid.
@@ -457,11 +460,42 @@ void renderTetrisGrid(){
     for(int i=0; i<GRID_WIDTH*GRID_HEIGHT; i++){
         SDL_Rect rect = {grid[i].x * TILE_SIZE, grid[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
 
+
         if(grid[i].block != NULL){
             renderBlock(grid[i].block, &rect);
         }
         else if(SDL_RenderDrawRect(renderer, &rect)<0){
             printf("SDL_Error:%s\n", SDL_GetError());
+        }
+    }
+    
+    //TODO: check vector clearedRows for rows to spawn particles in.
+    // Put particles into vector of its own so we can make sure
+    // we delete all memory in heap.
+    if(linesCleared && particles.empty()){
+        // particles haven't been allocated yet. make them here
+        // on the rows in clearedRows vector.
+        
+        // for testing, spawn one particle in the center of the tile
+        // and delete after 1 second.
+        for(int i=0; i<clearedRows.size(); i++){
+            int row = clearedRows[i]*TILE_SIZE;
+
+            for(int x=0; x<GRID_WIDTH*TILE_SIZE; x += TILE_SIZE){
+                /*
+                Block* block = getTile(x, row, &grid)->block;// ITS THIS
+                */
+                //Tile* tile = getTile(x, row, &grid);
+                int xPos = x + (TILE_SIZE/2);
+                particles.push_back( new Particle(xPos, row) ); 
+                printf("Populated tile with particle (%i, %i)\n", x, row);
+                // NOTE: this is kindof hardcoded shit but doing for testing.
+            }
+        }
+    } else if(linesCleared){
+        // render all particles in vector
+        for(int i=0; i<particles.size(); i++){
+            particles[i]->render(renderer);
         }
     }
 }
