@@ -383,7 +383,6 @@ void gameLoop(){
                             // Insert blocks into position of Piece when landed,
                             // then get rid of that Piece in the queue.
                             currentPiece->insertBlocksAtCurrPos();
-                            //pieceQueue.pop();
 
                             pieceQueue[0] = pieceQueue[1];
                             pieceQueue[1] = pieceQueue[2];
@@ -412,8 +411,7 @@ void gameLoop(){
                     linesCleared = false;
                     clearCompleteLines2();
                     clearedRows.clear();
-                } else {
-
+                    // do queue stuff now
                 }
         }
 
@@ -430,12 +428,17 @@ void gameLoop(){
 
         renderTetrisGrid();
 
-        // Render current piece
-        Block *block;
-        for(int i=0; i<4; i++){
-            block = currentPiece->blocks[i];
-            SDL_Rect rect = {block->x * TILE_SIZE, block->y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-            renderBlock(block, &rect);
+        if(!linesCleared){
+            // Render current piece
+            Block *block;
+            for(int i=0; i<4; i++){
+                block = currentPiece->blocks[i];
+                SDL_Rect rect = {block->x * TILE_SIZE, block->y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+                renderBlock(block, &rect);
+            }
+
+            renderGhostPiece();
+
         }
 
         renderHeldPiece();
@@ -443,7 +446,7 @@ void gameLoop(){
         //TODO: render queue
         renderPieceQueue();
 
-        renderGhostPiece();
+        //renderGhostPiece();
         SDL_RenderPresent(renderer);
     }
     
