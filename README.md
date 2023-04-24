@@ -3,7 +3,7 @@ It feels like creating your own tetris is a sort of rite of passage as a game de
 
 It's written in C++ with [SDL](https://www.libsdl.org/) (including [SDL_image](https://github.com/libsdl-org/SDL_image) and [SDL_ttf](https://github.com/libsdl-org/SDL_ttf)).
 
-**I'm not releasing it because it's literally Tetris with a funny background, but here's a** [video]().
+**I'm not releasing it because it's literally Tetris with a funny background, but here's a** [video](https://youtu.be/fWdjqzIpYWk).
 
 ## Features
 - You can rotate clock-wise with 'P', and counter clock-wise with 'O'.
