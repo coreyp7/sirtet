@@ -4,12 +4,10 @@
 // #include <SDL_mixer.h>
 // #include <stdio.h>
 #pragma once
+#include <include/constants.h>
 #include <include/Tile.h>
 #include <stddef.h>
 #include "array"
-
-const int GRID_WIDTH = 10;
-const int GRID_HEIGHT = 20;
 
 /* Initializes all of the SDL stuff needed. */
 // int init(SDL_Window* window, SDL_Renderer *renderer, int windowWidth, int windowHeight);

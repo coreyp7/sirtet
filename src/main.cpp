@@ -9,10 +9,6 @@
 #include <queue>
 #include <string>
 
-/* */
-#include "include/Text.h"
-#include "include/util.h"
-
 /* Project includes */
 #include "include/Piece.h"
 #include "include/S_Piece.h"
@@ -24,6 +20,12 @@
 #include "include/I_Piece.h"
 #include "include/Tile.h"
 #include "include/Particle.h"
+
+///////////////////////////////
+#include "include/constants.h"
+#include "include/Globals.h"
+#include "include/util.h"
+#include "include/Text.h"
 
 // Function signatures in main.cpp (in order)
 void fillGrid();
@@ -45,11 +47,7 @@ int loadAssets();
 int init();
 void cleanup();
 
-const int WINDOW_WIDTH = 1080;
-const int WINDOW_HEIGHT = 720;
-const int TILE_SIZE = 25;
-const int PIECE_START_POS_X = (GRID_WIDTH/2)-1;
-const int PIECE_START_POS_Y = 1;
+
 // Viewport for entire window
 SDL_Rect windowViewport = {
     0, 0, WINDOW_WIDTH, WINDOW_HEIGHT
@@ -76,11 +74,8 @@ SDL_Rect heldViewport = {
     5*10, 4*10
 };
 
-SDL_Window *window;
-SDL_Renderer *renderer;
+
 TTF_Font* globalFont;
-const SDL_Color SDL_COLOR_WHITE = {255, 255, 255, 255};
-const SDL_Color SDL_COLOR_GREEN = {0, 255, 0, 255};
 bool gameOver = false;
 
 std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
