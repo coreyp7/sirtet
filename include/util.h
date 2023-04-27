@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include "include/render.h"
 #include "include/constants.h"
+#include <vector>
+#include "include/Piece.h"
 
-
+void handleInput(std::vector<SDL_Keycode> keysPressed, Piece *piece);
 int init();
 int loadAssets();
