@@ -1,5 +1,9 @@
 #include "include/util.h"
 
+Uint32 getTime(){
+    return SDL_GetTicks();
+}
+
 int init(){
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -97,14 +101,15 @@ void fillGrid(){
     }
     */
 }
+
 // Get pointer to rect at position specified.
 // (Top left going down)
 // Returns NULL if the requested grid position is invalid.
-// Tile* getTile(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid){
-//     if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
-//         return NULL;
-//     }
+Tile* getTile(int x, int y){
+    if((x >= GRID_WIDTH) || (y >= GRID_HEIGHT)){
+        return NULL;
+    }
 
-//     int rowStart = y * GRID_WIDTH;
-//     return &grid->at(rowStart + x);
-// }
+    int rowStart = y * GRID_WIDTH;
+    return &grid.at(rowStart + x);
+}

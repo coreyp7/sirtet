@@ -1,6 +1,7 @@
 #include "include/util.h"
 #include "include/render.h"
 #include "include/constants.h"
+#include "include/GameState.h"
 
 int main(int argc, char* args[]){
     int good = init();
@@ -15,6 +16,7 @@ int main(int argc, char* args[]){
     std::vector<SDL_Keycode> keysPressed;
 
     fillGrid(); // fill grid with Tile objects
+    initializeGameState();
 
     while(!quit){
         // event loop
@@ -33,6 +35,8 @@ int main(int argc, char* args[]){
         //     handleInput(keysPressed, currentPiece);
         //     keysPressed.clear();
         // }
+
+        simulateGameState(keysPressed);
 
         render();
     }

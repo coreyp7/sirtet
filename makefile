@@ -2,11 +2,11 @@ FILENAME = main
 
 #OBJS specifies which files to compile as part of the project
 #OBJS = src\main.cpp src\Globals.cpp src\Tile.cpp src\Block.cpp src\Text.cpp src\util.cpp src\Particle.cpp
-OBJS = src/main2.cpp src/util.cpp src/render.cpp src/Text.cpp src/Globals.cpp
+OBJS = src/main2.cpp src/util.cpp src/render.cpp src/Text.cpp src/Globals.cpp src/GameState.cpp src/Tile.cpp src/Block.cpp
 
-PIECE_FILE_LIST = src/Tile.cpp
+#PIECE_FILE_LIST = src/Piece.cpp src/Tile.cpp src/Block.cpp
 
-#PIECE_FILE_LIST = src\Piece.cpp src\S_Piece.cpp src\T_Piece.cpp src/Z_Piece.cpp src/L_Piece.cpp src/J_Piece.cpp src/O_Piece.cpp src/I_Piece.cpp
+PIECE_FILE_LIST = src\Piece.cpp src\S_Piece.cpp src\T_Piece.cpp src/Z_Piece.cpp src/L_Piece.cpp src/J_Piece.cpp src/O_Piece.cpp src/I_Piece.cpp
 #CC specifies which compiler we're using
 CC = g++
 

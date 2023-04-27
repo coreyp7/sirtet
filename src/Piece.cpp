@@ -49,7 +49,7 @@ bool Piece::move(Direction dir){
             return false;
         }
 
-        if(getTile(block->x + xMove, block->y + yMove, grid)->block != NULL){
+        if(getTile(block->x + xMove, block->y + yMove)->block != NULL){
             return false;
         }
         //block++;
@@ -75,7 +75,7 @@ bool Piece::isEmptyAndInBounds(int x, int y){
         return false;
     }
 
-    return(getTile(x, y, grid)->block == NULL);
+    return(getTile(x, y)->block == NULL);
 }
 
 void Piece::cleanupLanded(){
@@ -92,7 +92,7 @@ void Piece::cleanupLanded(){
 // Should only be called when a Piece has landed and you're going to get rid of it.
 int Piece::insertBlocksAtCurrPos(){
     for(int i=0; i<blocksSize; i++){
-        getTile(blocks[i]->x, blocks[i]->y, grid)->block = blocks[i];
+        getTile(blocks[i]->x, blocks[i]->y)->block = blocks[i];
     }
 }
 
@@ -118,13 +118,13 @@ void Piece::landInstant(){
     // Go through each row (top to bottom) until we find a tile with block in it
     for(int y=pieceBase; y<GRID_HEIGHT; y++){
         for(int blockIndex=0; blockIndex<blocksSize; blockIndex++){
-            if(getTile(blocks[blockIndex]->x, y-baseOffsets[blockIndex], grid)->block != NULL){
+            if(getTile(blocks[blockIndex]->x, y-baseOffsets[blockIndex])->block != NULL){
                // rowDes is the row where our Piece base is going.
                 int rowDest = y - 1;
                 for(int i=0; i<blocksSize; i++){
                     // move the blocks to their new Tiles
                     blocks[i]->setPosition(blocks[i]->x, rowDest-baseOffsets[i]);
-                    getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
+                    getTile(blocks[i]->x, rowDest-baseOffsets[i])->block = blocks[i];
                     // note: somehow have to mark that we've 'landed'
                 }
                 printf("Placed this Piece on the ground; returning out of landInstant\n");
@@ -138,7 +138,7 @@ void Piece::landInstant(){
         int rowDest = GRID_HEIGHT-1; 
         for(int i=0; i<blocksSize; i++){
             blocks[i]->setPosition(blocks[i]->x, rowDest-baseOffsets[i]);
-            getTile(blocks[i]->x, rowDest-baseOffsets[i], grid)->block = blocks[i];
+            getTile(blocks[i]->x, rowDest-baseOffsets[i])->block = blocks[i];
         } 
     }
     return;
