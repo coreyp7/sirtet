@@ -1,4 +1,4 @@
-#include "include/J_Piece.h"
+#include "include/pieces/J_Piece.h"
 
 J_Piece::J_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
 : Piece(){

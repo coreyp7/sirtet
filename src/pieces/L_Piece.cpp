@@ -1,4 +1,4 @@
-#include "include/L_Piece.h"
+#include "include/pieces/L_Piece.h"
 
 L_Piece::L_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
 : Piece(){

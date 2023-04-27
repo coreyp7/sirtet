@@ -1,5 +1,5 @@
 
-#include "include/O_Piece.h"
+#include "include/pieces/O_Piece.h"
 
 O_Piece::O_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
 : Piece(){

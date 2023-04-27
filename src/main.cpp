@@ -15,15 +15,15 @@
 
 /* Project includes */
 #include "include/Piece.h"
-#include "include/S_Piece.h"
-#include "include/T_Piece.h"
-#include "include/Z_Piece.h"
-#include "include/L_Piece.h"
-#include "include/J_Piece.h"
-#include "include/O_Piece.h"
-#include "include/I_Piece.h"
+#include "include/pieces/S_Piece.h"
+#include "include/pieces/T_Piece.h"
+#include "include/pieces/Z_Piece.h"
+#include "include/pieces/L_Piece.h"
+#include "include/pieces/J_Piece.h"
+#include "include/pieces/O_Piece.h"
+#include "include/pieces/I_Piece.h"
 #include "include/Tile.h"
-#include "include/Particle.h"
+//#include "include/pieces/Particle.h"
 
 // Function signatures in main.cpp (in order)
 void fillGrid();

@@ -1,4 +1,4 @@
-#include "include/Z_Piece.h"
+#include "include/pieces/Z_Piece.h"
 
 Z_Piece::Z_Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid)
 : Piece(){
