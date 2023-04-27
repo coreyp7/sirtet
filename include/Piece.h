@@ -14,11 +14,11 @@ class Piece {
 
         Block *blocks[4]; // the blocks that makeup this Piece (always 4)
         int blocksSize = 4; // just keeping this just in case I wanna add weird blocks or sum
-        std::array<Tile, constants::GRID_WIDTH*constants::GRID_HEIGHT> *grid;
+        std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid;
 
         
         Piece();
-        Piece(int x, int y, std::array<Tile, constants::GRID_WIDTH*constants::GRID_HEIGHT> *grid);
+        Piece(int x, int y, std::array<Tile, GRID_WIDTH*GRID_HEIGHT> *grid);
         ~Piece();
         bool move(Direction dir);
         virtual void setPosition(int x, int y) = 0;

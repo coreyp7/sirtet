@@ -78,7 +78,7 @@ SDL_Rect heldViewport = {
 TTF_Font* globalFont;
 bool gameOver = false;
 
-std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
+//std::array<Tile, GRID_WIDTH * GRID_HEIGHT> grid; // 0 - 199
 //std::queue<Piece*> pieceQueue;
 Piece* pieceQueue[4];
 Piece* currentPiece;

@@ -8,7 +8,7 @@ int init(){
     }
 
     window = SDL_CreateWindow("Not tetris", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-        constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT, SDL_WINDOW_SHOWN );
+        WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN );
     if(window == NULL){
         printf("Window couldn't be created, SDL error: %s\n", SDL_GetError());
         return -2;
@@ -79,6 +79,24 @@ int loadAssets(){
     return 0;
 }
 
+// Populates the grid array with every Tile in our grid.
+void fillGrid(){
+    for(int row=0; row<GRID_HEIGHT; row++){
+        for(int column=0; column<GRID_WIDTH; column++){
+            int rowStart = row * GRID_WIDTH; // first tile pos in this row
+            grid[rowStart + column] = Tile{column, row, NULL};
+        }
+    }
+
+/*
+    for(int row=0; row<4; row++){
+        for(int column=0; column<5; column++){
+            int rowStart = row * 5; // first tile pos in this row
+            heldGrid[rowStart + column] = Tile{column, row, NULL};
+        }
+    }
+    */
+}
 // Get pointer to rect at position specified.
 // (Top left going down)
 // Returns NULL if the requested grid position is invalid.

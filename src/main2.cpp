@@ -14,6 +14,8 @@ int main(int argc, char* args[]){
     SDL_Event event;
     std::vector<SDL_Keycode> keysPressed;
 
+    fillGrid(); // fill grid with Tile objects
+
     while(!quit){
         // event loop
         while(SDL_PollEvent(&event) != 0){
